@@ -37,6 +37,19 @@ customParameters.push(string(
   defaultValue: 'giza-jenkins@gmail.com',
   trim: true
 ))
+customParameters.push(credentials(
+  name: 'PAX_SERVER_CREDENTIALS_ID',
+  description: 'The server credential used to create PAX file',
+  credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl',
+  defaultValue: 'TestAdminzOSaaS2',
+  required: true
+))
+customParameters.push(string(
+  name: 'PAX_SERVER_IP',
+  description: 'The server IP used to create PAX file',
+  defaultValue: '172.30.0.1',
+  trim: true
+))
 customParameters.push(string(
   name: 'ARTIFACTORY_SERVER',
   description: 'Artifactory server, should be pre-defined in Jenkins configuration',
