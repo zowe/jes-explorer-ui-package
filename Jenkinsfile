@@ -102,6 +102,8 @@ node ('jenkins-slave') {
     stage('build') {
       sh 'mkdir public'
       sh 'cp -r ./node_modules/explorer-jes/dist ./public'
+      sh 'mkdir content'
+      sh 'cp ./ ./content/'
     }
 
     stage('package') {
