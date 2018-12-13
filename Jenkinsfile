@@ -24,6 +24,19 @@ opts.push(disableConcurrentBuilds())
 
 // define custom build parameters
 def customParameters = []
+customParameters.push(credentials(
+  name: 'NPM_CREDENTIALS_ID',
+  description: 'npm auth token',
+  credentialType: 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl',
+  defaultValue: 'giza-jenkins-basicAuth',
+  required: true
+))
+customParameters.push(string(
+  name: 'NPM_USER_EMAIL',
+  description: 'npm user email',
+  defaultValue: 'giza-jenkins@gmail.com',
+  trim: true
+))
 customParameters.push(string(
   name: 'ARTIFACTORY_SERVER',
   description: 'Artifactory server, should be pre-defined in Jenkins configuration',
