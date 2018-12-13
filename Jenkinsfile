@@ -117,7 +117,7 @@ node ('jenkins-slave') {
         //Create pax will handle moving files to z/OS and then pulling it back
         createPax('jes-explorer-ui-package', "jes-explorer-ui-package-${buildIdentifier}.pax",
                   params.PAX_SERVER_IP, params.PAX_SERVER_CREDENTIALS_ID,
-                  './public', '/zaas1/buildWorkspace', '-ppx -o saveext')
+                  './', '/zaas1/buildWorkspace', '-ppx -o saveext')
       }
     }
 
