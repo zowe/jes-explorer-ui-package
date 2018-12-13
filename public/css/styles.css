@@ -1,0 +1,93 @@
+/**
+ * This program and the accompanying materials are made available under the terms of the
+ * Eclipse Public License v2.0 which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-v20.html
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Copyright IBM Corporation 2018
+ */
+
+html, body, #app {
+    height: 100%;
+}
+
+html {
+    font-family: sans-serif;
+}
+
+body {
+    font-size: 13px;
+    line-height: 20px;
+    margin: 0;
+}
+
+.component {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.component-no-vertical-pad {
+    padding-bottom: 0px !important;
+    padding-top: 0px !important;
+}
+
+.component-header {
+    display: inline-flex;
+    width: 100%;
+}
+
+/* Override inline width style */
+.component-text-field-fill{
+    padding-left: 8px;
+    width: 100% !important;
+}
+
+.tree-card {
+    padding-bottom: 0;
+}
+
+/* Node Tree Styles */
+.content-link {
+    cursor: pointer;
+    color: #2E77A1;
+}
+
+.node-label {
+    font-size: 14px;
+}
+
+/* Override inline height/width icon style */
+.node-icon {
+    padding: 0;
+    height: 20px !important;
+    width: 20px !important;
+}
+
+.node-toggle {
+    cursor: pointer;
+}
+
+.node-toggle-placeholder {
+    width: 24px;
+    display: inline-block;
+}
+
+.node ul {
+    list-style: none;
+    padding-left: 10px;
+    margin: 0;
+}
+
+.node span {
+    display: inline-block;
+    vertical-align: top;
+    line-height: 24px;
+}
+
+.vertical-horizontal-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
