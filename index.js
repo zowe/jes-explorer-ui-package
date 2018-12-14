@@ -17,13 +17,13 @@ process.env.NODE_ENV = 'production';
 let app = express();
 const port = 3000;
 
-//the path here should become relative 
-//we should know we're in zowe_install_dir so should be able to construct a path such as ../api-mediation/keystore/localhost/localhost.keystore.p12
 const options = {
-	pfx: fs.readFile('/u/jcain/zowe/0.9.4/api-mediation/keystore/localhost/localhost.keystore.p12'),
-	passphrase: 'password'
+  key: fs.readFileSync('/u/jcain/zowe/0.9.5/api-mediation/keystore/localhost/localhost.keystore.key'),
+  cert: fs.readFileSync('/u/jcain/zowe/0.9.5/api-mediation/keystore/localhost/localhost.keystore.cer-ebcdic'),
+  ca: fs.readFileSync('/u/jcain/zowe/0.9.5/api-mediation/keystore/local_ca/localca.cer-ebcdic'),
+  secureProtocol: "TLSv1_2_method",
+  rejectUnauthorized: false
 };
 
-app.use('/ui/v1/express', express.static('public'));
+app.use('/ui/v1/jes-explorer', express.static('public'));
 https.createServer(options, app).listen(port, '0.0.0.0', () => console.log(`JES Explorer listening on ${port}`));
-//http.createServer(app).listen(port, '0.0.0.0', () => console.log(`JES Explorer listening on ${port}`));
