@@ -1,15 +1,16 @@
 {
-  "name": "jes-explorer-ui-express",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "explorer-ui-server",
+  "version": "0.0.1",
+  "description": "UI server for Zowe Desktop explorer plugins",
   "dependencies": {
     "express": "^4.16.4",
-    "explorer-jes": "0.0.1"
+    "explorer-jes": "0.0.2"
   },
   "scripts": {
+    "start": "node src/index.js",
+    "postinstall": "scripts/post-install.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "EPL-2"
 }
