@@ -26,7 +26,7 @@ var argv = require('yargs')
   .usage('Usage: $0 [options]')
   .option('C', {
     alias: 'config',
-    default: 'default-configs/config-default.json',
+    default: 'configs/config-default.json',
     description: 'config JSON file',
   })
   .help('h')
