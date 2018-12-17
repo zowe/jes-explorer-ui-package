@@ -11,9 +11,6 @@
  */
 
 
-
-@Library('zowe-jenkins-library') _
-
 def isPullRequest = env.BRANCH_NAME.startsWith('PR-')
 def isMasterBranch = env.BRANCH_NAME == 'master'
 
