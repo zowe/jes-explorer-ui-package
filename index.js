@@ -21,7 +21,6 @@ const options = {
   key: fs.readFileSync('/u/jcain/zowe/0.9.5/api-mediation/keystore/localhost/localhost.keystore.key'),
   cert: fs.readFileSync('/u/jcain/zowe/0.9.5/api-mediation/keystore/localhost/localhost.keystore.cer-ebcdic'),
   ca: fs.readFileSync('/u/jcain/zowe/0.9.5/api-mediation/keystore/local_ca/localca.cer-ebcdic'),
-  secureProtocol: "TLSv1_2_method",
   rejectUnauthorized: false
 };
 

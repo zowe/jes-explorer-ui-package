@@ -5,7 +5,7 @@ services:
       description: JES explorer UI providing access to jobs and job output
       catalogUiTileId: jesUI
       instanceBaseUrls:
-        - http://WINMVS3B.HURSLEY.IBM.COM:3000/
+        - https://WINMVS3B.HURSLEY.IBM.COM:3000/
       homePageRelativeUrl:  # Home page is at the same URL
       routedServices:
         - gatewayUrl: api/v1
