@@ -15,6 +15,7 @@
 @Library('zowe-jenkins-library') _
 
 def isPullRequest = env.BRANCH_NAME.startsWith('PR-')
+def isMasterBranch = env.BRANCH_NAME == 'master'
 
 def opts = []
 // keep last 20 builds for regular branches, no keep for pull requests
@@ -24,6 +25,24 @@ opts.push(disableConcurrentBuilds())
 
 // define custom build parameters
 def customParameters = []
+customParameters.push(credentials(
+  name: 'NPM_CREDENTIALS_ID',
+  description: 'npm auth token',
+  credentialType: 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl',
+  defaultValue: 'giza-jenkins-basicAuth',
+  required: true
+))
+customParameters.push(string(
+  name: 'NPM_USER_EMAIL',
+  description: 'npm user email',
+  defaultValue: 'giza-jenkins@gmail.com',
+  trim: true
+))
+customParameters.push(booleanParam(
+  name: 'NPM_RELEASE',
+  description: 'Publish a release or snapshot version. By default, this task will create snapshot. Check this to publish a release version. Release can only be done on master branch.',
+  defaultValue: false
+ ))
 customParameters.push(string(
   name: 'ARTIFACTORY_SERVER',
   description: 'Artifactory server, should be pre-defined in Jenkins configuration',
@@ -64,52 +83,69 @@ node ('jenkins-slave') {
       sh 'npm -v'
 
       ansiColor('xterm') {
-        // login to private npm registry
-        def npmRegistry = 'https://gizaartifactory.jfrog.io/gizaartifactory/api/npm/npm-release/'
-        npmLogin(npmRegistry, params.NPM_CREDENTIALS_ID, params.NPM_USER_EMAIL)
-
         // sh 'npm prune'
         sh 'npm ci'
       }
     }
 
-    stage('build') {
-      sh 'mkdir public'
-      sh 'cp -r ./node_modules/explorer-jes/dist ./public'
+    stage('test') {
+      ansiColor('xterm') {
+        sh 'npm run lint'
+      }
     }
 
-    stage('package') {
-      // SFTP to z/OS
-      // Move to working directory
-      // Unpax pax -r -x tar -o to=IBM-1047 -f express.tar //extract the tar
-      // Delete tar
-      // Pax again
-      // SFTP back to jenkins slave
-      echo "creating pax file from workspace..."
-      def buildIdentifier = getBuildIdentifier(true, '__EXCLUDE__', true)
-      timeout(time: 10, unit: 'MINUTES') {
-        //Create pax will handle moving files to z/OS and then pulling it back
-        createPax('jes-explorer-ui-package', "jes-explorer-ui-package-${buildIdentifier}.pax",
-                  params.PAX_SERVER_IP, params.PAX_SERVER_CREDENTIALS_ID,
-                  './public', '/zaas1/buildWorkspace', '-ppx -o saveext')
+    stage('SonarQube analysis') {
+      def scannerHome = tool 'sonar-scanner-3.2.0';
+      withSonarQubeEnv('sonar-default-server') {
+        sh "${scannerHome}/bin/sonar-scanner"
+      }
+
+      timeout(time: 1, unit: 'HOURS') {
+        def qg = waitForQualityGate()
+        if (qg.status != 'OK') {
+          error "Pipeline aborted due to quality gate failure: ${qg.status}"
+        }
+      }
+    }
+
+    stage('build') {
+      ansiColor('xterm') {
+        sh 'npm run build'
       }
     }
 
     stage('publish') {
-      // ===== publishing to generic artifactory ==============================
-      // gizaArtifactory is pre-defined in Jenkins management
+      // ===== publishing to jfrog npm registry ==============================
+      // artifactory is pre-defined in Jenkins management
       def server = Artifactory.server params.ARTIFACTORY_SERVER
-      def uploadSpec = readFile "artifactory-upload-spec.json"
-      def buildIdentifier = getBuildIdentifier(true, 'master', false)
-      uploadSpec = uploadSpec.replaceAll(/\$\{version\}/, "${packageName}-${packageVersion}-${buildIdentifier}")
-      // prepare build information
-      def buildInfo = Artifactory.newBuildInfo()
-      // build info name/number are optional
-      // buildInfo.name = env.JOB_NAME // packageName
-      // buildInfo.number = "${packageVersion}-dev+${env.BUILD_NUMBER}"
-      // upload
-      server.upload spec: uploadSpec, buildInfo: buildInfo
-      server.publishBuildInfo buildInfo
+      def npmRegistry = sh(script: "node -e \"console.log(require('./package.json').publishConfig.registry)\"", returnStdout: true).trim()
+      if (!npmRegistry || !npmRegistry.startsWith('http')) {
+        error 'npm registry is not defined, or cannot be retrieved'
+      }
+      // login to private npm registry
+      def npmUser = npmLogin(npmRegistry, params.NPM_CREDENTIALS_ID, params.NPM_USER_EMAIL)
+
+      if (!params.NPM_RELEASE) {
+        // show current git status for troubleshooting purpose
+        // if git status is not clean, npm version will fail
+        sh "git config --global user.email \"${params.NPM_USER_EMAIL}\""
+        sh "git config --global user.name \"${npmUser}\""
+        sh "git status"
+
+        def buildIdentifier = getBuildIdentifier('%Y%m%d-%H%M%S', 'master', false)
+        def newVersion = "${packageVersion}-snapshot.${buildIdentifier}"
+        echo "ready to publish snapshot version v${newVersion}..."
+        sh "npm version ${newVersion}"
+        // publish
+        sh 'npm publish --tag snapshot --force'
+      } else {
+        echo "ready to release v${packageVersion}"
+        // publish
+        sh 'npm publish'
+        // tag branch
+        // sh "git tag v${packageVersion}"
+        // sh "git push --tags"
+      }
     }
 
     stage('done') {

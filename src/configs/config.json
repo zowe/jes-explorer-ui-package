@@ -1,8 +1,0 @@
-{
-  "apiVersion": "v1",
-  "port": 7445,
-  "https": {
-    "key": "server.key",
-    "cert": "server.cert"
-  }
-}

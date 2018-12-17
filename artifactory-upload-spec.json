@@ -1,6 +1,0 @@
-{
-    "files": [{
-      "pattern": "jes-explorer-ui-package-*.pax",
-      "target": "atlas-local-snapshots/com/ibm/atlas/jes-explorer-ui-package/{ARTIFACTORY_VERSION}-{RELEASE_IDENTIFIER}/"
-    }]
-  }

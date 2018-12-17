@@ -1,16 +1,26 @@
 {
   "name": "explorer-ui-server",
   "version": "0.0.1",
-  "description": "UI server for Zowe Desktop explorer plugins",
-  "dependencies": {
-    "express": "^4.16.4",
-    "explorer-jes": "0.0.2"
+  "description": "HTTP Server to host static files",
+  "author": "IBM",
+  "license": "EPL-2",
+  "main": "src/index.js",
+  "bin": {
+    "explorer-ui-server": "src/index.js"
+  },
+  "publishConfig": {
+    "registry": "https://gizaartifactory.jfrog.io/gizaartifactory/api/npm/npm-local-release/"
   },
   "scripts": {
     "start": "node src/index.js",
-    "postinstall": "scripts/post-install.sh",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "EPL-2"
+  "dependencies": {
+    "express": "^4.16.4",
+    "yargs": "^12.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0"
+  }
 }
