@@ -41,15 +41,15 @@ const serviceFor = config['service-for'] || name;
 const app = express();
 
 // server static folder
-process.stdout.write(`[${serviceFor}] paths will be served:`);
+process.stdout.write(`[${serviceFor}] paths will be served:\n`);
 for (let one of config.paths) {
   const baseDir = path.resolve(one.dir);
-  process.stdout.write(`[${serviceFor}]   - ${one.uri} => ${baseDir}`);
+  process.stdout.write(`[${serviceFor}]   - ${one.uri} => ${baseDir}\n`);
   app.use(one.uri, express.static(baseDir));
 }
 
 // start server
 https.createServer(config.https, app)
   .listen(config.port, '0.0.0.0', () => {
-    process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...`);
+    process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...\n`);
   });
