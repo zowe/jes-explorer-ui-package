@@ -106,12 +106,6 @@ node ('jenkins-slave') {
       // }
     }
 
-    stage('build') {
-      ansiColor('xterm') {
-        sh 'npm run build'
-      }
-    }
-
     stage('publish') {
       // ===== publishing to jfrog npm registry ==============================
       // artifactory is pre-defined in Jenkins management
