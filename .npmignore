@@ -8,6 +8,9 @@ Jenkinsfile
 resources
 src/languages
 
+.editorconfig
+.eslintrc.yml
+
 # Dependency directories
 node_modules/
 
