@@ -1,6 +1,12 @@
 # test report folder
 reports/
 
+# SonarQube scanner
+.scannerwork
+
+# default public folder
+public
+
 # Logs
 logs
 *.log
