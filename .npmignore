@@ -1,0 +1,22 @@
+.vscode
+webpack.config.js
+.gitignore
+.eslintrc.js
+.babelrc
+.history
+Jenkinsfile
+resources
+src/languages
+
+.editorconfig
+.eslintrc.yml
+
+# Dependency directories
+node_modules/
+
+# SonarQube scanner
+.scannerwork
+sonar-project.properties
+
+# default public folder
+public

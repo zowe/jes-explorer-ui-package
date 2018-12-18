@@ -1,0 +1,12 @@
+{
+  "service-for": "",
+  "paths": [{
+    "uri": "/",
+    "dir": "public"
+  }],
+  "port": 8080,
+  "https": {
+    "key": "server.key",
+    "cert": "server.cert"
+  }
+}
