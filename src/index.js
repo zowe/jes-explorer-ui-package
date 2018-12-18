@@ -114,6 +114,13 @@ const requestHandler = (request, response) => {
           writeLog(request.url, 404, file);
           response.writeHead(404, { 'Content-Type': 'text/plain' });
           response.end('File not found');
+        } else if (error.code == 'EISDIR') {
+          writeLog(request.url, 301, file);
+          response.writeHead(301, {
+            'Content-Type': 'text/plain',
+            'Location': `${request.url}/`
+          });
+          response.end('Moved Permanently');
         } else {
           writeLog(request.url, 500, `error#${error.code}`);
           response.writeHead(500, { 'Content-Type': 'text/plain' });
