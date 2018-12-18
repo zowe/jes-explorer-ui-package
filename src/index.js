@@ -94,7 +94,7 @@ const requestHandler = (request, response) => {
       basedir = one.dir;
       break;
     }
-  };
+  }
   if (baseuri) {
     file = path.resolve(basedir, url.substr(baseuri.length + 1));
   }
@@ -127,7 +127,7 @@ const requestHandler = (request, response) => {
       }
     });
   } else {
-    writeLog(request.url, 404, `error#`);
+    writeLog(request.url, 404, 'error#');
     response.writeHead(404, { 'Content-Type': 'text/plain' });
     response.end('File not found');
   }
