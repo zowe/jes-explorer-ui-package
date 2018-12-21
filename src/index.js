@@ -55,6 +55,7 @@ const mimeList = {
   svg: 'image/svg+xml'
 };
 const mimeDefault = 'text/html';
+const mimeError = 'text/plain';
 
 // server static folder
 process.stdout.write(`[${serviceFor}] config file ${configFile}:\n`);
@@ -96,15 +97,14 @@ const requestHandler = (request, response) => {
     }
   }
   if (baseuri) {
-    file = path.resolve(basedir, url.substr(baseuri.length + 1));
+    file = path.resolve(basedir, url.substr(
+      baseuri.substr(-1) === '/' ? baseuri.length : baseuri.length + 1
+    ));
   }
 
   // decide content type
-  let ext = path.extname(url).toLowerCase();
-  let contentType = mimeDefault;
-  if (mimeList[`.${ext}`]) {
-    contentType = mimeList[`.${ext}`];
-  }
+  const ext = url.split(/\./).slice(-1)[0].toLowerCase();
+  let contentType = (ext && mimeList[ext]) || mimeDefault;
 
   if (file) {
     // read file
@@ -112,19 +112,19 @@ const requestHandler = (request, response) => {
       if (error) {
         if (error.code == 'ENOENT') {
           writeLog(request.url, 404, file);
-          response.writeHead(404, { 'Content-Type': 'text/plain' });
+          response.writeHead(404, { 'Content-Type': mimeError });
           response.end('File not found');
         } else if (error.code == 'EISDIR') {
           writeLog(request.url, 301, file);
           response.writeHead(301, {
-            'Content-Type': 'text/plain',
+            'Content-Type': mimeError,
             'Location': `${request.url}/`
           });
           response.end('Moved Permanently');
         } else {
           writeLog(request.url, 500, `error#${error.code}`);
-          response.writeHead(500, { 'Content-Type': 'text/plain' });
-          response.end('Read file failed with error: ' + error.code + ' ..\n');
+          response.writeHead(500, { 'Content-Type': mimeError });
+          response.end(`Read file failed with error: ${error.code} ..\n`);
           response.end();
         }
       } else {
@@ -135,7 +135,7 @@ const requestHandler = (request, response) => {
     });
   } else {
     writeLog(request.url, 404, 'error#');
-    response.writeHead(404, { 'Content-Type': 'text/plain' });
+    response.writeHead(404, { 'Content-Type': mimeError });
     response.end('File not found');
   }
 };
