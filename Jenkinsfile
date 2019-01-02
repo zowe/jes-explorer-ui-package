@@ -94,7 +94,7 @@ node ('jenkins-slave') {
           error "Test failed: $err"
         } finally {
           // publish test reports
-          junit 'reports/report.xml'
+          junit 'reports/junit.xml'
           publishHTML([
             allowMissing: false,
             alwaysLinkToLastBuild: false,
