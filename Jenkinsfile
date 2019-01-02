@@ -99,12 +99,12 @@ node ('jenkins-slave') {
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: false,
-            reportDir: 'reports',
+            reportDir: 'reports/test-report',
             reportFiles: 'index.html',
             reportName: 'Test Result HTML Report',
             reportTitles: ''
           ])
-          cobertura coberturaReportFile: 'coverage/cobertura-coverage.xml',
+          cobertura coberturaReportFile: 'reports/cobertura-coverage.xml',
             sourceEncoding: 'ASCII',
             autoUpdateHealth: false,
             autoUpdateStability: false,
@@ -120,7 +120,7 @@ node ('jenkins-slave') {
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: false,
-            reportDir: 'coverage',
+            reportDir: 'reports/lcov-report',
             reportFiles: 'index.html',
             reportName: 'Coverage HTML Report',
             reportTitles: ''

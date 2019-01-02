@@ -4,7 +4,7 @@
     "junit_report_path": "reports/junit.xml"
   },
   "mochawesomeReporterOptions": {
-    "reportDir": "reports",
+    "reportDir": "reports/test-report",
     "reportFilename": "index",
     "html": true,
     "json": false,
