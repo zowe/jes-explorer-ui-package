@@ -88,40 +88,44 @@ node ('jenkins-slave') {
     stage('test') {
       ansiColor('xterm') {
         sh 'npm run lint'
-        sh 'npm test'
-
-        // publish test reports
-        junit 'reports/report.xml'
-        publishHTML([
-          allowMissing: false,
-          alwaysLinkToLastBuild: false,
-          keepAll: false,
-          reportDir: 'reports',
-          reportFiles: 'index.html',
-          reportName: 'Test Result HTML Report',
-          reportTitles: ''
-        ])
-        cobertura coberturaReportFile: 'coverage/cobertura-coverage.xml',
-          sourceEncoding: 'ASCII',
-          autoUpdateHealth: false,
-          autoUpdateStability: false,
-          onlyStable: false,
-          failUnhealthy: false,
-          failUnstable: false,
-          zoomCoverageChart: false,
-          conditionalCoverageTargets: '70, 0, 0',
-          lineCoverageTargets: '80, 0, 0',
-          methodCoverageTargets: '80, 0, 0',
-          maxNumberOfBuilds: 0
-        publishHTML([
-          allowMissing: false,
-          alwaysLinkToLastBuild: false,
-          keepAll: false,
-          reportDir: 'coverage',
-          reportFiles: 'index.html',
-          reportName: 'Coverage HTML Report',
-          reportTitles: ''
-        ])
+        try {
+          sh 'npm test'
+        } catch (err) {
+          error "Test failed: $err"
+        } finally {
+          // publish test reports
+          junit 'reports/report.xml'
+          publishHTML([
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: false,
+            reportDir: 'reports',
+            reportFiles: 'index.html',
+            reportName: 'Test Result HTML Report',
+            reportTitles: ''
+          ])
+          cobertura coberturaReportFile: 'coverage/cobertura-coverage.xml',
+            sourceEncoding: 'ASCII',
+            autoUpdateHealth: false,
+            autoUpdateStability: false,
+            onlyStable: false,
+            failUnhealthy: false,
+            failUnstable: false,
+            zoomCoverageChart: false,
+            conditionalCoverageTargets: '70, 0, 0',
+            lineCoverageTargets: '80, 0, 0',
+            methodCoverageTargets: '80, 0, 0',
+            maxNumberOfBuilds: 0
+          publishHTML([
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: false,
+            reportDir: 'coverage',
+            reportFiles: 'index.html',
+            reportName: 'Coverage HTML Report',
+            reportTitles: ''
+          ])
+        }
       }
     }
 
