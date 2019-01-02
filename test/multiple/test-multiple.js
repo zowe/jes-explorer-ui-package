@@ -26,6 +26,7 @@ describe('test with 2 paths mounted on /relpath1 and /relpath2', function() {
   });
 
   after('shutdown test server', async function() {
+    await U.sleep(60 * 60 * 1000);
     await U.stopTestServer(serverPid);
   });
 
