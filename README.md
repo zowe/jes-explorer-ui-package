@@ -31,7 +31,7 @@ Options:
 npm test
 ```
 
-Test reports are saved in `reports` folder, including (JUnit)[https://wiki.jenkins.io/display/JENKINS/JUnit+Plugin] result, (Mochawesome)[https://www.npmjs.com/package/mochawesome] report, (Istanbul Coverage)[https://www.npmjs.com/package/nyc] report, (Cobertura)[http://cobertura.github.io/cobertura/] report etc.
+Test reports are saved in `reports` folder, including [JUnit](https://wiki.jenkins.io/display/JENKINS/JUnit+Plugin) result, [Mochawesome](https://www.npmjs.com/package/mochawesome) report, [Istanbul Coverage](https://www.npmjs.com/package/nyc) report, [Cobertura](http://cobertura.github.io/cobertura/) report etc.
 
 ## Run SonarQube Code Analysis
 
