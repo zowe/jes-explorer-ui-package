@@ -1,0 +1,15 @@
+{
+  "service-for": "",
+  "paths": [{
+    "uri": "/relpath1",
+    "dir": "public"
+  }, {
+    "uri": "/relpath2",
+    "dir": "public"
+  }],
+  "port": 9090,
+  "https": {
+    "key": "../../configs/server.key",
+    "cert": "../../configs/server.cert"
+  }
+}

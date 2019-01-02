@@ -11,6 +11,9 @@ src/languages
 .editorconfig
 .eslintrc.yml
 
+# MacOS
+.DS_Store
+
 # Dependency directories
 node_modules/
 
