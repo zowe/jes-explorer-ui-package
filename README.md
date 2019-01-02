@@ -10,7 +10,7 @@ Provide simple HTTPS server to server Zowe Desktop Explorer plugins.
 npm start
 ```
 
-Then visit `https://localhost:8080` to access the test server. The default
+Then visit `https://localhost:8080` to access the test server. The default config file is `configs/config-default.json`.
 
 ## CLI Options
 
@@ -31,7 +31,7 @@ Options:
 npm test
 ```
 
-Test reports are saved in `reports` folder, including jUnit result, Mochawesome report, Istanbul Coverage report, Cobertura report etc.
+Test reports are saved in `reports` folder, including (JUnit)[https://wiki.jenkins.io/display/JENKINS/JUnit+Plugin] result, (Mochawesome)[https://www.npmjs.com/package/mochawesome] report, (Istanbul Coverage)[https://www.npmjs.com/package/nyc] report, (Cobertura)[http://cobertura.github.io/cobertura/] report etc.
 
 ## Run SonarQube Code Analysis
 
