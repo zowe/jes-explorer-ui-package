@@ -21,5 +21,9 @@ node_modules/
 .scannerwork
 sonar-project.properties
 
+# test result
+.nyc_output
+reports/
+
 # default public folder
 public
