@@ -129,7 +129,7 @@ const requestHandler = (request, response) => {
         }
       } else {
         writeLog(request.url, 200, file);
-        response.writeHead(200, { 'Content-Type': contentType });
+        response.writeHead(200, { 'Content-Type': contentType, 'X-Frame-Options': 'SAMEORIGIN' });
         response.end(content);
       }
     });
