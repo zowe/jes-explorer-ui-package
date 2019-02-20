@@ -80,32 +80,46 @@ const startTestServer = (config, verbose = false) => {
   }
 
   const child = child_process.spawn('node', params);
-  let serverStarted = false;
+  let serverStarted = 0;
+  let output = {
+    stdout: '',
+    stderr: '',
+  };
 
   child.stdout.on('data', (data) => {
     debug(`${tagTestServer} ${data}`);
+    output.stdout += data;
 
     if (!serverStarted &&
       data.indexOf('[explorer-ui-server] is started and listening on') > -1) {
       debug(`${tagTestServer} testing server is started.`);
-      serverStarted = true;
+      serverStarted = 1;
     }
   });
 
   child.stderr.on('data', (data) => {
     debug(`${tagTestServer}[ERROR] ${data}`);
+    output.stderr += data;
   });
 
   child.on('close', (code) => {
     debug(`${tagTestServer} test server exited with code ${code}`);
+    serverStarted = -1;
   });
 
   return new Promise((resolve, reject) => {
-    waitUntil(() => serverStarted)
+    waitUntil(() => {
+      if (serverStarted === -1) {
+        throw new Error('test server exited prematurely');
+      } else {
+        return serverStarted === 1;
+      }
+    })
       .then(() => {
         resolve(child);
       })
       .catch(err => {
+        err.output = output;
         reject(err);
       });
   });

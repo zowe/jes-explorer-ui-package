@@ -1,0 +1,11 @@
+{
+  "service-for": "",
+  "paths": [{
+    "uri": "/",
+    "dir": "public"
+  }],
+  "https": {
+    "key": "../../../configs/server.key",
+    "cert": "../../../configs/server.cert"
+  }
+}

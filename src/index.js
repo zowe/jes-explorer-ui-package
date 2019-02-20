@@ -42,7 +42,14 @@ var argv = require('yargs')
 
 // load config
 const configFile = path.resolve(rootDir, 'configs', argv.config);
-const config = require('./config')(configFile);
+let config;
+try {
+  config = require('./config')(configFile);
+} catch (err) {
+  process.stderr.write(`failed to read config file ${argv.config}\n`);
+  process.stderr.write(`${err}\n\n`);
+  process.exit(1);
+}
 const serviceFor = config['service-for'] || name;
 
 // mime
@@ -106,6 +113,17 @@ const requestHandler = (request, response) => {
   const ext = url.split(/\./).slice(-1)[0].toLowerCase();
   let contentType = (ext && mimeList[ext]) || mimeDefault;
 
+  // check CSP settings
+  if (config.csp) {
+    // check frame-ancestors settings
+    if (config.csp['frame-ancestors']) {
+      const frameAncestors = config.csp['frame-ancestors'].join(' ').trim();
+      if (frameAncestors) {
+        response.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
+      }
+    }
+  }
+
   if (file) {
     // read file
     fs.readFile(file, (error, content) => {
@@ -141,7 +159,24 @@ const requestHandler = (request, response) => {
 };
 
 // start server
-https.createServer(config.https, requestHandler)
-  .listen(config.port, '0.0.0.0', () => {
-    process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...\n\n`);
-  });
+try {
+  if (!config.https ||
+    !((config.https.cert && config.https.key) || (config.https.pfx && config.https.passphrase))) {
+    throw new Error('https configuration is missing');
+  }
+  if (!config.port) {
+    throw new Error('port configuration is missing');
+  }
+  if (paths.length === 0) {
+    throw new Error('paths configuration is missing');
+  }
+
+  https.createServer(config.https, requestHandler)
+    .listen(config.port, '0.0.0.0', () => {
+      process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...\n\n`);
+    });
+} catch (err) {
+  process.stderr.write(`[${serviceFor}] is failed to start, error:\n`);
+  process.stderr.write(`[${serviceFor}] ${err}\n\n`);
+  process.exit(1);
+}
