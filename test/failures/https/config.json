@@ -1,0 +1,8 @@
+{
+  "service-for": "",
+  "paths": [{
+    "uri": "/",
+    "dir": "public"
+  }],
+  "port": 8080
+}
