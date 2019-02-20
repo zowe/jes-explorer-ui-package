@@ -106,6 +106,17 @@ const requestHandler = (request, response) => {
   const ext = url.split(/\./).slice(-1)[0].toLowerCase();
   let contentType = (ext && mimeList[ext]) || mimeDefault;
 
+  // check CSP settings
+  if (config.csp) {
+    // check frame-ancestors settings
+    if (config.csp['frame-ancestors']) {
+      const frameAncestors = config.csp['frame-ancestors'].join(' ').trim();
+      if (frameAncestors) {
+        response.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
+      }
+    }
+  }
+
   if (file) {
     // read file
     fs.readFile(file, (error, content) => {

@@ -8,5 +8,8 @@
   "https": {
     "key": "server.key",
     "cert": "server.cert"
+  },
+  "csp": {
+    "frame-ancestors": []
   }
 }
