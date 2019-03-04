@@ -117,7 +117,7 @@ const requestHandler = (request, response) => {
   if (config.csp) {
     // check frame-ancestors settings
     if (config.csp['frame-ancestors']) {
-      const frameAncestors = config.csp['frame-ancestors'].join(' ').trim();
+      const frameAncestors = config.csp['frame-ancestors'].join(' ').trim().toLowerCase();
       if (frameAncestors) {
         response.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
       }
