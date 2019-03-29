@@ -13,7 +13,6 @@
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
-const { constants: cryptoConstants } = require('crypto');
 
 // load package meta
 const pkg = require('../package.json');
@@ -171,8 +170,6 @@ try {
   if (paths.length === 0) {
     throw new Error('paths configuration is missing');
   }
-
-  config.https.secureOptions = cryptoConstants.SSL_OP_NO_TLSv1 | cryptoConstants.SSL_OP_NO_TLSv1_1;
 
   https.createServer(config.https, requestHandler)
     .listen(config.port, '0.0.0.0', () => {
