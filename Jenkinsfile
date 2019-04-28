@@ -33,6 +33,13 @@ node('ibm-jenkins-slave-nvm') {
     ]
   )
 
+  // build stage is required
+  pipeline.build(
+    operation: {
+      echo "build holder"
+    }
+  )
+
   pipeline.test(
     name          : 'Unit',
     junit         : "reports/junit.xml",
