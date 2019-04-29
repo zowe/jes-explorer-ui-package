@@ -33,6 +33,12 @@ node('ibm-jenkins-slave-nvm') {
     ]
   )
 
+  // we need sonar scan
+  pipeline.sonarScan(
+    scannerTool     : 'sonar-scanner-3.2.0',
+    scannerServer   : 'sonar-default-server'
+  )
+
   // build stage is required
   pipeline.build(
     operation: {
@@ -50,12 +56,6 @@ node('ibm-jenkins-slave-nvm') {
       [dir: "reports/test-report", files: "index.html", name: "Report: Test Result"],
       [dir: "reports/lcov-report", files: "index.html", name: "Report: Code Coverage"],
     ],
-  )
-
-  // we need sonar scan
-  pipeline.sonarScan(
-    scannerTool     : 'sonar-scanner-3.2.0',
-    scannerServer   : 'sonar-default-server'
   )
 
   // define we need publish stage
