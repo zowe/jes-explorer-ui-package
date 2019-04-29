@@ -52,6 +52,12 @@ node('ibm-jenkins-slave-nvm') {
     ],
   )
 
+  // we need sonar scan
+  pipeline.sonarScan(
+    scannerTool     : 'sonar-scanner-3.2.0',
+    scannerServer   : 'sonar-default-server'
+  )
+
   // define we need publish stage
   pipeline.publish()
 
