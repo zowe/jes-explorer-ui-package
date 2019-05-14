@@ -20,16 +20,16 @@ node('ibm-jenkins-slave-nvm') {
   pipeline.setup(
     packageName: 'org.zowe.explorer-ui-server',
     github: [
-      email                      : 'zowe.robot@gmail.com',
-      usernamePasswordCredential : 'zowe-robot-github',
+      email                      : lib.Constants.DEFAULT_GITHUB_ROBOT_EMAIL,
+      usernamePasswordCredential : lib.Constants.DEFAULT_GITHUB_ROBOT_CREDENTIAL,
     ],
     artifactory: [
-      url                        : 'https://gizaartifactory.jfrog.io/gizaartifactory',
-      usernamePasswordCredential : 'GizaArtifactory',
+      url                        : lib.Constants.DEFAULT_ARTIFACTORY_URL,
+      usernamePasswordCredential : lib.Constants.DEFAULT_ARTIFACTORY_ROBOT_CREDENTIAL,
     ],
     publishRegistry: [
-      email                      : 'giza-jenkins@gmail.com',
-      usernamePasswordCredential : 'GizaArtifactory',
+      email                      : lib.Constants.DEFAULT_NPM_PRIVATE_REGISTRY_EMAIL,
+      usernamePasswordCredential : lib.Constants.DEFAULT_NPM_PRIVATE_REGISTRY_CREDENTIAL,
     ]
   )
 
