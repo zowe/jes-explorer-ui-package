@@ -15,7 +15,7 @@ node('ibm-jenkins-slave-nvm') {
 
   def pipeline = lib.pipelines.nodejs.NodeJSPipeline.new(this)
 
-  pipeline.admins.add("jackjia")
+  pipeline.admins.add("jackjia", "jcain")
 
   pipeline.setup(
     packageName: 'org.zowe.explorer-ui-server',
