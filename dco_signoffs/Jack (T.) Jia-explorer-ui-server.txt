@@ -1,0 +1,6 @@
+I, Jack (T.) Jia hereby sign-off-by all of my past commits to this repo subject to the Developer Certificate of Origin (DCO), Version 1.1. In the past I have used emails: jack-tiefeng.jia@ibm.com
+
+722a017f984f54085d627fb00a3afea36fc55fa0 Revert "Merge pull request #11 from zowe/remove-older-tls-protocols"
+
+This reverts commit 2da8fba7e0119a18e96a5601bd5ab09b2190d2f8, reversing
+changes made to dce16bdbc15aecbd87f0c57035215a217f6ea401.
