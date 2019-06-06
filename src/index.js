@@ -175,10 +175,8 @@ try {
   config.https.secureOptions = cryptoConstants.SSL_OP_NO_TLSv1 | cryptoConstants.SSL_OP_NO_TLSv1_1;
   config.https.ciphers = [
     'ECDHE-RSA-AES256-GCM-SHA384',
-    'ECDHE-RSA-AES256-SHA',
     'ECDHE-RSA-AES128-GCM-SHA256',
     'ECDHE-RSA-AES128-SHA256',
-    'ECDHE-RSA-AES128-SHA',
     'ECDHE-ECDSA-AES128-GCM-SHA256',
     'ECDHE-ECDSA-AES256-GCM-SHA384',
     'ECDHE-ECDSA-AES128-SHA256',
