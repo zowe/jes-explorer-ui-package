@@ -27,3 +27,6 @@ reports/
 
 # default public folder
 public
+
+# dco signoffs
+dco_signoffs
