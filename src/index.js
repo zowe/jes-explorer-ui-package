@@ -26,10 +26,47 @@ var argv = require('yargs')
   .version(version)
   .scriptName(name)
   .usage('Usage: $0 [options]')
-  .option('C', {
-    alias: 'config',
-    default: 'config-default.json',
-    description: 'config JSON file',
+  .option('s', {
+    alias: 'service',
+    description: 'service-for path',
+    demandOption: true,
+    exclude: ''
+  })
+  .option('b', {
+    alias: 'path',
+    description: 'base path uri',
+    demandOption: true
+  })
+  .option('p', {
+    alias: 'port',
+    description: 'listening port',
+    demandOption: true
+  })
+  .option('k', {
+    alias: 'key',
+    default: '',
+    description: 'server key'
+  })
+  .option('c', {
+    alias: 'cert',
+    default: '',
+    description: 'server cert',
+  })
+  .option('x', {
+    alias: 'pfx',
+    default: '',
+    description: 'server pfx',
+  })
+  .option('w', {
+    alias: 'pass',
+    default: '',
+    description: 'server pfx passphrase',
+  })
+  .option('f', {
+    alias: 'csp',
+    default: '',
+    description: 'csp whitelist ancestors frames',
+    demandOption: true
   })
   .option('v', {
     alias: 'verbose',
@@ -39,15 +76,34 @@ var argv = require('yargs')
   })
   .help('h')
   .alias('h', 'help')
+  .implies('key','cert')
+  .implies('pfx','pass')
   .argv;
 
+
+const paramConfig = {
+  'service-for': argv.service,
+  'paths': [{
+    'uri': argv.path,
+    'dir': 'public'
+  }],
+  'port': argv.port,
+  'https': {
+    'key': argv.key,
+    'cert': argv.cert,
+    'pfx': argv.pfx,
+    'passphrase': argv.pass,
+  },
+  'csp': {
+    'frame-ancestors': [argv.csp]
+  }
+};
 // load config
-const configFile = path.resolve(rootDir, 'configs', argv.config);
 let config;
 try {
-  config = require('./config')(configFile);
+  config = require('./config')(paramConfig);
 } catch (err) {
-  process.stderr.write(`failed to read config file ${argv.config}\n`);
+  process.stderr.write('failed to process config\n');
   process.stderr.write(`${err}\n\n`);
   process.exit(1);
 }
@@ -66,7 +122,6 @@ const mimeDefault = 'text/html';
 const mimeError = 'text/plain';
 
 // server static folder
-process.stdout.write(`[${serviceFor}] config file ${configFile}:\n`);
 process.stdout.write(`[${serviceFor}] paths will be served:\n`);
 const paths = [];
 for (let one of config.paths) {
