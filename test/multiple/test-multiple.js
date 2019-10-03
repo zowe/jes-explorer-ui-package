@@ -47,7 +47,7 @@ describe('test with 2 paths mounted on /relpath1 and /relpath2', function() {
     expect(res.headers).to.include({ 'content-type': 'text/html' });
   });
 
-  it('should return index.html when requesting /relpath2 if follow redirect', async function() {
+  it.skip('should return index.html when requesting /relpath2 if follow redirect', async function() {
     const res = await U.request(this, '/relpath2', TEST_SERVER_PORT, 1);
 
     expect(res).to.have.property('status');

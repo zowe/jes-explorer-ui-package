@@ -7,7 +7,6 @@
  *
  * Copyright IBM Corporation 2018, 2019
  */
-const path = require('path');
 const child_process = require('child_process');
 const debug = require('debug')('test:utils');
 const _ = require('lodash');
@@ -138,12 +137,8 @@ const startTestServer = (config, verbose = false) => {
   }
 
   let child;
-  try {
-    child = child_process.spawn('node', params);
-  } catch(err) {
-    console.log(err);
-  }
-
+  child = child_process.spawn('node', params);
+  
   let serverStarted = 0;
   let output = {
     stdout: '',
@@ -192,7 +187,7 @@ const startTestServer = (config, verbose = false) => {
 const stopTestServer = async pid => {
   debug(`${tagTestServer} killing testing server ...`);
   // Send SIGHUP to process
-  pid.kill('SIGHUP');
+  pid.kill();
 
   return new Promise((resolve, reject) => {
     waitUntil(() => pid.killed)

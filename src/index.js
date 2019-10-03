@@ -34,7 +34,6 @@ var argv = require('yargs')
   .option('b', {
     alias: 'path',
     description: 'base path uri',
-    demandOption: true
   })
   .option('d', {
     alias: 'dir',
@@ -44,8 +43,7 @@ var argv = require('yargs')
   })
   .option('p', {
     alias: 'port',
-    description: 'listening port',
-    demandOption: true
+    description: 'listening port'
   })
   .option('k', {
     alias: 'key',
@@ -81,7 +79,7 @@ var argv = require('yargs')
   })
   .help('h')
   .alias('h', 'help')
-  // .check(validateParams)
+  .check(validateParams)
   .argv;
 
 
@@ -109,17 +107,17 @@ function validateParams (argv) {
 
   const serviceFor=argv.s;
 
-  if(argv.b==='' && isValid) {
+  if((argv.b==='' || !argv.b) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] paths configuration is missing\n`);
   }
 
-  if(argv.p==='' && isValid) {
+  if((argv.p==='' || !argv.p) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
   }
 
-  if(argv.k==='' && argv.c==='' && argv.x==='' && argv.w==='' && isValid) {
+  if( (argv.k==='' && argv.c==='' && argv.x==='' && argv.w==='') && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
