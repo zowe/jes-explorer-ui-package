@@ -7,7 +7,7 @@
  *
  * Copyright IBM Corporation 2018, 2019
  */
-
+const path = require('path');
 const child_process = require('child_process');
 const debug = require('debug')('test:utils');
 const _ = require('lodash');
@@ -69,17 +69,81 @@ const waitUntil = (escapeFunction, interval = 50, timeout = 10000) => {
   });
 };
 
+
+const buildParams = (configPath) => {
+  const config = require(configPath);
+  let params = [];
+
+  if(config['service-for']) {
+    params.push('-s');
+    params.push(config['service-for']);
+  }
+
+  if(config['paths'] && config['paths'].length>0 ) {
+    if(config['paths'][0]['uri']) {
+      params.push('-b');
+      params.push(config['paths'][0]['uri']);
+    }
+
+    if(config['paths'][0]['dir']) {
+      params.push('-d');
+      params.push(config['paths'][0]['dir']);
+    }
+  }
+
+  if(config['port']) {
+    params.push('-p');
+    params.push(config['port']);
+  }
+
+  if(config['csp'] && config['csp']['frame-ancestors'] && config['csp']['frame-ancestors'].length>0) {
+    params.push('-f');
+    params.push(config['csp']['frame-ancestors'][0]);
+  }
+
+  if(config['https']) {
+    let httpsConfig = config['https'];
+    if(httpsConfig['key']) {
+      params.push('-k');
+      params.push(config['https']['key']);
+    }
+
+    if(httpsConfig['cert']) {
+      params.push('-c');
+      params.push(config['https']['cert']);
+    }
+
+    if(httpsConfig['pfx']) {
+      params.push('-x');
+      params.push(config['https']['pfx']);
+    }
+
+    if(httpsConfig['passphrase']) {
+      params.push('-w');
+      params.push(config['https']['passphrase']);
+    }
+  }
+  return params;
+};
+
+
 const startTestServer = (config, verbose = false) => {
   let params = ['src/index.js'];
   if (config) {
-    params.push('-C');
-    params.push(config);
+    params=params.concat(buildParams(config));
   }
+
   if (verbose) {
     params.push('-v');
   }
 
-  const child = child_process.spawn('node', params);
+  let child;
+  try {
+    child = child_process.spawn('node', params);
+  } catch(err) {
+    console.log(err);
+  }
+
   let serverStarted = 0;
   let output = {
     stdout: '',

@@ -19,7 +19,7 @@ let serverPid;
 // allow self signed certs
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-describe('test with 1 path mounted on /', function() {
+describe.only('test with 1 path mounted on /', function() {
   before('start test server', async function() {
     serverPid = await U.startTestServer('../test/csp/config.json');
     debug(`testing server is started as PID #${serverPid.pid}`);

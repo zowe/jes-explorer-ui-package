@@ -29,13 +29,18 @@ var argv = require('yargs')
   .option('s', {
     alias: 'service',
     description: 'service-for path',
-    demandOption: true,
-    exclude: ''
+    default: ''
   })
   .option('b', {
     alias: 'path',
     description: 'base path uri',
     demandOption: true
+  })
+  .option('d', {
+    alias: 'dir',
+    description: 'base dir',
+    demandOption: true,
+    default: '../app'
   })
   .option('p', {
     alias: 'port',
@@ -76,8 +81,7 @@ var argv = require('yargs')
   })
   .help('h')
   .alias('h', 'help')
-  .implies('key','cert')
-  .implies('pfx','pass')
+  // .check(validateParams)
   .argv;
 
 
@@ -85,7 +89,7 @@ const paramConfig = {
   'service-for': argv.service,
   'paths': [{
     'uri': argv.path,
-    'dir': 'public'
+    'dir': argv.dir
   }],
   'port': argv.port,
   'https': {
@@ -98,6 +102,43 @@ const paramConfig = {
     'frame-ancestors': [argv.csp]
   }
 };
+
+function validateParams (argv) {
+
+  let isValid = true;
+
+  const serviceFor=argv.s;
+
+  if(argv.b==='' && isValid) {
+    isValid = false;
+    process.stderr.write(`[${serviceFor}] paths configuration is missing\n`);
+  }
+
+  if(argv.p==='' && isValid) {
+    isValid = false;
+    process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
+  }
+
+  if(argv.k==='' && argv.c==='' && argv.x==='' && argv.w==='' && isValid) {
+    isValid = false;
+    process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
+  }
+
+  if( ( (argv.k==='' && argv.c>'') || (argv.k>'' && argv.c==='')
+      || (argv.x==='' && argv.w>'') || (argv.x>'' && argv.w==='') ) && isValid) {
+    isValid = false;
+    process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
+  }
+
+  if(!isValid) {
+    process.stderr.write(`[${serviceFor}] is failed to start, error:\n`);
+    process.exit(1);
+    return false;
+  }
+
+  return true;
+}
+
 // load config
 let config;
 try {
