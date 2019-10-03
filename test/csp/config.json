@@ -6,8 +6,8 @@
   }],
   "port": 8080,
   "https": {
-    "key": "../../configs/server.key",
-    "cert": "../../configs/server.cert"
+    "key": "configs/server.key",
+    "cert": "configs/server.cert"
   },
   "csp": {
     "frame-ancestors": [

@@ -6,7 +6,7 @@
   }],
   "port": 8080,
   "https": {
-    "key": "../../configs/server-doesnot-exist.key",
-    "cert": "../../configs/server-doesnot-exist.cert"
+    "key": "configs/server-doesnot-exist.key",
+    "cert": "configs/server-doesnot-exist.cert"
   }
 }

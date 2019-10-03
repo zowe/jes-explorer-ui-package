@@ -9,7 +9,7 @@
   }],
   "port": 9090,
   "https": {
-    "key": "../../configs/server.key",
-    "cert": "../../configs/server.cert"
+    "key": "configs/server.key",
+    "cert": "configs/server.cert"
   }
 }
