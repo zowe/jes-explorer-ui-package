@@ -20,7 +20,15 @@ Usage: explorer-ui-server [options]
 
 Options:
   --version      Show version number                                   [boolean]
-  -C, --config   config JSON file               [default: "config-default.json"]
+  -s, --service  service-for path                                  [default: ""]
+  -b, --path     base path uri
+  -d, --dir      base dir                         [required] [default: "../app"]
+  -p, --port     listening port
+  -k, --key      server key                                        [default: ""]
+  -c, --cert     server cert                                       [default: ""]
+  -x, --pfx      server pfx                                        [default: ""]
+  -w, --pass     server pfx passphrase                             [default: ""]
+  -f, --csp      csp whitelist ancestors frames                       [required]
   -v, --verbose  show request logs                    [boolean] [default: false]
   -h, --help     Show help                                             [boolean]
 ```
