@@ -123,7 +123,9 @@ function validateParams (argv) {
   }
 
   if( ( (argv.k==='' && argv.c>'') || (argv.k>'' && argv.c==='')
-      || (argv.x==='' && argv.w>'') || (argv.x>'' && argv.w==='') ) && isValid) {
+      || (argv.x==='' && argv.w>'' && argv.k==='' && argv.c==='')
+      || (argv.x==='' && argv.w>'' && !(argv.k>'' && argv.c>'')) 
+      || (argv.x>'' && argv.w==='') ) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
