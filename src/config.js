@@ -9,17 +9,20 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 
-module.exports = (configFile) => {
-  let config = require(configFile);
-  const baseDir = path.dirname(configFile);
+module.exports = (config) => {
 
+  if(config && config.csp && config.csp['frame-ancestors']) {
+    const frames=config.csp['frame-ancestors'];
+    if(frames.length>0) {
+      config.csp['frame-ancestors'] = config.csp['frame-ancestors'][0].split(',');
+    }
+  }
   // load https certs file content
   if (config && config.https) {
     ['key', 'cert', 'pfx'].forEach(key => {
       if (config.https[key]) {
-        let file = path.resolve(baseDir, config.https[key]);
+        let file = config.https[key];
         config.https[key] = fs.readFileSync(file);
       }
     });
