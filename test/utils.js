@@ -185,6 +185,11 @@ const startTestServer = (config, verbose = false) => {
 };
 
 const stopTestServer = async pid => {
+  if (!pid) {
+    debug('unable to stop undefined pid, server is not running');
+    return;
+  }
+
   debug(`${tagTestServer} killing testing server ...`);
   // Send SIGHUP to process
   pid.kill();
