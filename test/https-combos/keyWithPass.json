@@ -1,0 +1,13 @@
+{
+  "service-for": "",
+  "paths": [{
+    "uri": "/",
+    "dir": "public"
+  }],
+  "port": 9090,
+  "https": {
+    "key": "configs/server.key",
+    "cert": "configs/server.cert",
+    "passphrase": "pass"
+  }
+}
