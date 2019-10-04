@@ -46,7 +46,7 @@ async function testFailedResponse(configName) {
   }
 }
 
-describe.only('test https combos', function() {
+describe('test https combos', function() {
  
   afterEach('shutdown test server', async function() {
     await U.stopTestServer(serverPid);
