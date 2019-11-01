@@ -33,14 +33,6 @@ node('ibm-jenkins-slave-nvm') {
     ]
   )
 
-  // we need sonar scan
-  pipeline.sonarScan(
-    scannerTool     : lib.Constants.DEFAULT_LFJ_SONARCLOUD_SCANNER_TOOL,
-    scannerServer   : lib.Constants.DEFAULT_LFJ_SONARCLOUD_SERVER,
-    allowBranchScan : lib.Constants.DEFAULT_LFJ_SONARCLOUD_ALLOW_BRANCH,
-    failBuild       : lib.Constants.DEFAULT_LFJ_SONARCLOUD_FAIL_BUILD
-  )
-
   // build stage is required
   pipeline.build(
     operation: {
@@ -58,6 +50,14 @@ node('ibm-jenkins-slave-nvm') {
       [dir: "reports/test-report", files: "index.html", name: "Report: Test Result"],
       [dir: "reports/lcov-report", files: "index.html", name: "Report: Code Coverage"],
     ],
+  )
+
+  // we need sonar scan
+  pipeline.sonarScan(
+    scannerTool     : lib.Constants.DEFAULT_LFJ_SONARCLOUD_SCANNER_TOOL,
+    scannerServer   : lib.Constants.DEFAULT_LFJ_SONARCLOUD_SERVER,
+    allowBranchScan : lib.Constants.DEFAULT_LFJ_SONARCLOUD_ALLOW_BRANCH,
+    failBuild       : lib.Constants.DEFAULT_LFJ_SONARCLOUD_FAIL_BUILD
   )
 
   // define we need publish stage
