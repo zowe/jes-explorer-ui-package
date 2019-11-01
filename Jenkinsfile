@@ -24,12 +24,12 @@ node('ibm-jenkins-slave-nvm') {
       usernamePasswordCredential : lib.Constants.DEFAULT_GITHUB_ROBOT_CREDENTIAL,
     ],
     artifactory: [
-      url                        : lib.Constants.DEFAULT_ARTIFACTORY_URL,
-      usernamePasswordCredential : lib.Constants.DEFAULT_ARTIFACTORY_ROBOT_CREDENTIAL,
+      url                        : 'https://zowe.jfrog.io/zowe',
+      usernamePasswordCredential : 'ZoweArtifactory',
     ],
     publishRegistry: [
-      email                      : lib.Constants.DEFAULT_NPM_PRIVATE_REGISTRY_EMAIL,
-      usernamePasswordCredential : lib.Constants.DEFAULT_NPM_PRIVATE_REGISTRY_CREDENTIAL,
+      email                      : 'jack-tiefeng.jia@ibm.com',
+      usernamePasswordCredential : 'ZoweArtifactory',
     ]
   )
 

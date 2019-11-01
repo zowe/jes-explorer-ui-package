@@ -9,7 +9,7 @@
     "explorer-ui-server": "src/index.js"
   },
   "publishConfig": {
-    "registry": "https://gizaartifactory.jfrog.io/gizaartifactory/api/npm/npm-local-release/"
+    "registry": "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
   },
   "scripts": {
     "start": "node src/index.js",
