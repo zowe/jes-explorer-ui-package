@@ -35,8 +35,10 @@ node('ibm-jenkins-slave-nvm') {
 
   // we need sonar scan
   pipeline.sonarScan(
-    scannerTool     : 'sonar-scanner-3.2.0',
-    scannerServer   : 'sonar-default-server'
+    scannerTool     : lib.Constants.DEFAULT_LFJ_SONARCLOUD_SCANNER_TOOL,
+    scannerServer   : lib.Constants.DEFAULT_LFJ_SONARCLOUD_SERVER,
+    allowBranchScan : lib.Constants.DEFAULT_LFJ_SONARCLOUD_ALLOW_BRANCH,
+    failBuild       : lib.Constants.DEFAULT_LFJ_SONARCLOUD_FAIL_BUILD
   )
 
   // build stage is required
