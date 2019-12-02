@@ -9,7 +9,7 @@
     "explorer-ui-server": "src/index.js"
   },
   "publishConfig": {
-    "registry": "https://gizaartifactory.jfrog.io/gizaartifactory/api/npm/npm-local-release/"
+    "registry": "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
   },
   "scripts": {
     "start": "node src/index.js",
@@ -27,7 +27,7 @@
     "mocha": "^6.1.4",
     "mocha-jenkins-reporter": "^0.4.1",
     "mocha-multi-reporters": "^1.1.7",
-    "mochawesome": "^3.1.1",
+    "mochawesome": "^4.1.0",
     "nyc": "^14.1.0"
   }
 }
