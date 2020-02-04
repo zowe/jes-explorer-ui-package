@@ -3,7 +3,7 @@
   "version": "0.2.12",
   "description": "HTTP Server to host static files",
   "author": "IBM",
-  "license": "EPL-2",
+  "license": "EPL-2.0",
   "main": "src/index.js",
   "bin": {
     "explorer-ui-server": "src/index.js"
