@@ -204,12 +204,16 @@ const requestHandler = (request, response) => {
     file = path.resolve(basedir, url.substr(
       baseuri.substr(-1) === '/' ? baseuri.length : baseuri.length + 1
     ));
+
+    if(file.endsWith('min.js') && path.resolve(file+'.gz')) {
+      file +='.gz';
+    }
   }
 
   // decide content type
   const ext = url.split(/\./).slice(-1)[0].toLowerCase();
   let contentType = (ext && mimeList[ext]) || mimeDefault;
-
+  const contentEncoding = file.endsWith('.gz') ? 'gzip' : '';
   // check CSP settings
   if (config.csp) {
     // check frame-ancestors settings
@@ -244,7 +248,11 @@ const requestHandler = (request, response) => {
         }
       } else {
         writeLog(request.url, 200, file);
-        response.writeHead(200, { 'Content-Type': contentType });
+        let headers = {'Content-Type': contentType};
+        if(contentEncoding>'') {
+          headers['Content-Encoding'] = contentEncoding;
+        }
+        response.writeHead(200, headers);
         response.end(content);
       }
     });
