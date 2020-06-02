@@ -145,7 +145,18 @@ describe('test with 1 path mounted on /relpath', function() {
     expect(res.headers).to.include({ 'content-type': 'text/javascript' });
   });
 
-  it('should return js file when requesting /relpath/assets/javascript1.min.js', async function() {
+  it('should return js file even when js.gz file exists requesting /relpath/assets/javascript.js', async function() {
+    const res = await U.request(this, '/relpath/assets/javascript.js', TEST_SERVER_PORT);
+
+    expect(res).to.have.property('status');
+    expect(res.status).to.equal(200);
+    expect(res.data).to.be.a('string');
+    expect(res.data).to.include('javascript test');
+    expect(res.data).to.not.include('cnvyr.min.js.gz');
+    expect(res.headers).to.include({ 'content-type': 'text/javascript' });
+  });
+
+  it('should return min.js file when no min.js.gz file when requesting /relpath/assets/javascript1.min.js', async function() {
     const res = await U.request(this, '/relpath/assets/javascript1.min.js', TEST_SERVER_PORT);
 
     expect(res).to.have.property('status');
@@ -156,15 +167,16 @@ describe('test with 1 path mounted on /relpath', function() {
     expect(res.headers).to.not.include({ 'content-type': '' });
   });
 
-  it.only('should return gz file if exists when requesting /relpath/assets/javascript2.min.js', async function() {
+  it('should return gz file if exists when requesting /relpath/assets/javascript2.min.js', async function() {
     const res = await U.request(this, '/relpath/assets/javascript2.min.js', TEST_SERVER_PORT);
 
     expect(res).to.have.property('status');
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('javascript test');
+    expect(res.data).to.include('cnvyr.min.js.gz');
     expect(res.headers).to.include({ 'content-type': 'text/javascript' });
-    // expect(res.headers).to.include({ 'content-encoding': 'gzip' });
+    //expect(res.headers).to.include({ 'content-encoding': 'gzip' });
   });
 
   it('should return css when requesting /relpath/assets/css.css', async function() {
