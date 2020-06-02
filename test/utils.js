@@ -206,7 +206,7 @@ const stopTestServer = async pid => {
   });
 };
 
-const request = async (testcase, url, port = 8080, maxRedirects = 0) => {
+const request = async (testcase, url, port = 9090, maxRedirects = 0) => {
   const REQ = axios.create({
     baseURL: `https://localhost:${port}`,
     timeout: 5000,

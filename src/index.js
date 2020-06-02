@@ -205,15 +205,20 @@ const requestHandler = (request, response) => {
       baseuri.substr(-1) === '/' ? baseuri.length : baseuri.length + 1
     ));
 
-    if(file.endsWith('min.js') && path.resolve(file+'.gz')) {
-      file +='.gz';
+    
+    if(file !==null && file.endsWith('min.js')) {
+      const gzpath = path.resolve(file+'.gz');
+      if(fs.existsSync(gzpath)) {
+        file = gzpath;
+      }
     }
   }
 
   // decide content type
   const ext = url.split(/\./).slice(-1)[0].toLowerCase();
   let contentType = (ext && mimeList[ext]) || mimeDefault;
-  const contentEncoding = file.endsWith('.gz') ? 'gzip' : '';
+  const contentEncoding = (file !== null && file.endsWith('.gz')) ? 'gzip' : '';
+  
   // check CSP settings
   if (config.csp) {
     // check frame-ancestors settings

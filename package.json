@@ -24,8 +24,8 @@
     "chai": "^4.2.0",
     "debug": "^4.1.1",
     "eslint": "^5.16.0",
-    "mocha": "^6.1.4",
-    "mocha-jenkins-reporter": "^0.4.1",
+    "mocha": "^7.2.0",
+    "mocha-jenkins-reporter": "^0.4.3",
     "mocha-multi-reporters": "^1.1.7",
     "mochawesome": "^4.1.0",
     "nyc": "^14.1.0"
