@@ -168,15 +168,15 @@ describe('test with 1 path mounted on /relpath', function() {
   });
 
   it('should return gz file if exists when requesting /relpath/assets/javascript2.min.js', async function() {
-    const res = await U.request(this, '/relpath/assets/javascript2.min.js', TEST_SERVER_PORT);
+    const {res,data} = await U.request2(this, '/relpath/assets/javascript2.min.js', TEST_SERVER_PORT);
 
     expect(res).to.have.property('status');
     expect(res.status).to.equal(200);
-    expect(res.data).to.be.a('string');
-    expect(res.data).to.include('javascript test');
-    expect(res.data).to.include('cnvyr.min.js.gz');
-    expect(res.headers).to.include({ 'content-type': 'text/javascript' });
-    //expect(res.headers).to.include({ 'content-encoding': 'gzip' });
+    expect(data).to.be.a('string');
+    expect(data).to.include('javascript test');
+    expect(data).to.include('cnvyr.min.js.gz');
+    expect(res.headers.get('content-type')).to.equal('text/javascript');
+    expect(res.headers.get('content-encoding')).to.equal('gzip');
   });
 
   it('should return css when requesting /relpath/assets/css.css', async function() {

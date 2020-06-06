@@ -7,6 +7,8 @@
  *
  * Copyright IBM Corporation 2018, 2019
  */
+const fetch = require('node-fetch');
+const AbortController = require('abort-controller');
 const child_process = require('child_process');
 const debug = require('debug')('test:utils');
 const _ = require('lodash');
@@ -234,6 +236,54 @@ const request = async (testcase, url, port = 9090, maxRedirects = 0) => {
   return res;
 };
 
+
+const request2 = async (testcase, url, port = 9090, maxRedirects = 0) => {
+  const REQ = {
+    baseURL: `https://localhost:${port}`,
+    timeout: 5000,
+  };
+
+  const req = {
+    method: 'get',
+    url: url,
+    maxRedirects: maxRedirects,
+  };
+  debug('[request] request', req);
+
+  const controller = new AbortController();
+  const timeoutObj = setTimeout(() => {
+    controller.abort();
+  }, REQ.timeout);
+
+  let res, data;
+  try {
+    res = await fetch(`${REQ.baseURL}${url}`, {
+      method: 'GET',
+      redirect: 'follow',
+      follow: maxRedirects,
+      signal: controller.signal
+    });
+    if (res.ok) {
+      data = await res.text();
+    }
+  } catch (err) {
+    res = err && err.response;
+    if (err.name === 'AbortError') {
+      debug('request was aborted');
+    } 
+  } finally {
+    clearTimeout(timeoutObj);
+  }
+  
+  debug('[request] response', _.pick(res, ['status', 'statusText', 'headers'], data));
+  addContext(testcase, {
+    title: 'http response',
+    value: data
+  });
+
+  return {res, data};
+};
+
 module.exports = {
   sleep,
   waitUntil,
@@ -242,4 +292,5 @@ module.exports = {
   stopTestServer,
 
   request,
+  request2
 };
