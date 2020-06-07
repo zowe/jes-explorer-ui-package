@@ -20,118 +20,83 @@ const pkg = require('../package.json');
 const version = pkg && pkg.version;
 const name = pkg && pkg.name;
 const rootDir = path.resolve(__dirname, '..');
+// const rootDir = path.resolve(process.cwd());
 
-// define args
-var argv = require('yargs')
-  .version(version)
-  .scriptName(name)
-  .usage('Usage: $0 [options]')
-  .option('s', {
-    alias: 'service',
-    description: 'service-for path',
-    default: ''
-  })
-  .option('b', {
-    alias: 'path',
-    description: 'base path uri',
-  })
-  .option('d', {
-    alias: 'dir',
-    description: 'base dir',
-    demandOption: true,
-    default: '../app'
-  })
-  .option('p', {
-    alias: 'port',
-    description: 'listening port'
-  })
-  .option('k', {
-    alias: 'key',
-    default: '',
-    description: 'server key'
-  })
-  .option('c', {
-    alias: 'cert',
-    default: '',
-    description: 'server cert',
-  })
-  .option('x', {
-    alias: 'pfx',
-    default: '',
-    description: 'server pfx',
-  })
-  .option('w', {
-    alias: 'pass',
-    default: '',
-    description: 'server pfx passphrase',
-  })
-  .option('f', {
-    alias: 'csp',
-    default: '',
-    description: 'csp whitelist ancestors frames',
-    demandOption: true
-  })
-  .option('v', {
-    alias: 'verbose',
-    default: false,
-    description: 'show request logs',
-    type: 'boolean'
-  })
-  .help('h')
-  .alias('h', 'help')
-  .check(validateParams)
-  .argv;
+process.stdout.write(`[rootDir]:${rootDir}\n`);
+process.stdout.write(`[version]:${version}\n`);
+process.stdout.write(`[script name]:${name}\n`);
+
+const stdio = require('stdio');
+const ops = stdio.getopt({
+  'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
+  'path': {key: 'b', args:1,    description: 'base path uri', default:''},
+  'dir': {key: 'd',  args:1, description: 'base dir', default: '../app'},
+  'port': {key: 'p',  args:1, description: 'listening port'},
+  'key': {key: 'k',  args:1,description: 'server key', default:'' },
+  'cert': {key: 'c', args:1, description: 'server cert', default:''},
+  'pfx': {key: 'x', args:1, description: 'server pfx', default:''},
+  'pass': {key: 'w', args:1, description: 'server pfx passphrase', default:''},
+  'csp': {key: 'f', args:1, description: 'csp whitelist ancestors frames', default:''},
+  'verbose': {key: 'v', default:false}
+});
+
+if(ops.verbose) {
+  process.stdout.write(`[args]:${JSON.stringify(ops)}\n`);
+}
+
+validateParams(ops);
 
 
 const paramConfig = {
-  'service-for': argv.service,
+  'service-for': ops.service,
   'paths': [{
-    'uri': argv.path,
-    'dir': argv.dir
+    'uri': ops.path,
+    'dir': ops.dir
   }],
-  'port': argv.port,
+  'port': ops.port,
   'https': {
-    'key': argv.key,
-    'cert': argv.cert,
-    'pfx': argv.pfx,
-    'passphrase': argv.pass,
+    'key': ops.key,
+    'cert': ops.cert,
+    'pfx': ops.pfx,
+    'passphrase': ops.pass,
   },
   'csp': {
-    'frame-ancestors': [argv.csp]
+    'frame-ancestors': [ops.csp]
   }
 };
 
-function validateParams (argv) {
+function validateParams (param) {
 
   let isValid = true;
 
-  const serviceFor=argv.s;
+  const serviceFor=param.service;
 
-  if((argv.b==='' || !argv.b) && isValid) {
+  if((param.path==='' || !param.path) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] paths configuration is missing\n`);
   }
 
-  if((argv.p==='' || !argv.p) && isValid) {
+  if((param.port==='' || !param.port) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
   }
 
-  if( (argv.k==='' && argv.c==='' && argv.x==='' && argv.w==='') && isValid) {
+  if( (param.key==='' && param.cert==='' && param.pfx==='' && param.pass==='') && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
 
-  if( ( (argv.k==='' && argv.c>'') || (argv.k>'' && argv.c==='')
-      || (argv.x==='' && argv.w>'' && argv.k==='' && argv.c==='')
-      || (argv.x==='' && argv.w>'' && !(argv.k>'' && argv.c>'')) 
-      || (argv.x>'' && argv.w==='') ) && isValid) {
+  if( ( (param.key==='' && param.cert>'') || (param.key>'' && param.cert==='')
+      || (param.pfx==='' && param.pass>'' && param.key==='' && param.cert==='')
+      || (param.pfx==='' && param.pass>'' && !(param.key>'' && param.cert>'')) 
+      || (param.pfx>'' && param.pass==='') ) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
 
   if(!isValid) {
     process.stderr.write(`[${serviceFor}] is failed to start, error:\n`);
+    param.printHelp();
     process.exit(1);
     return false;
   }
@@ -149,7 +114,8 @@ try {
   process.exit(1);
 }
 const serviceFor = config['service-for'] || name;
-
+//process.stdout.write(`[config]:${JSON.stringify(config)}\n`);
+process.stdout.write(`[serviceFor]:${serviceFor}\n`);
 // mime
 const mimeList = {
   js: 'text/javascript',
@@ -180,7 +146,7 @@ const requestHandler = (request, response) => {
 
   // write log
   const writeLog = (url, code, file) => {
-    if (!argv.verbose) {
+    if (!ops.verbose) {
       return;
     }
 
