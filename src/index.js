@@ -42,17 +42,23 @@ try {
 
 // start server
 try {
-  
+
   const express = require('express');
   const expressStaticGzip = require('express-static-gzip');
-  const app = express();
   const csp = require('helmet-csp');
+
+  const app = express();
   app.disable('x-powered-by');
+  
+  // set csp
   if(config.csp['frame-ancestors'].length>0) {
     app.use(csp({directives: {frameAncestors:config.csp['frame-ancestors']}}));
   }
+
+  // server gz compress if available
   app.use(config.paths[0].uri,expressStaticGzip(config.paths[0].dir));
 
+  // configure https server and start listening
   const httpsServer =require('./server')(config,app);
   httpsServer.listen(config.port, '0.0.0.0', () => { process.stdout.write(`[${config.serviceFor}] is started and listening on ${config.port}...\n\n`);});
 
