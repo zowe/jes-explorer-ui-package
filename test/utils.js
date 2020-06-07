@@ -17,6 +17,14 @@ const addContext = require('mochawesome/addContext');
 
 const tagTestServer = '[TESTSERVER]';
 
+const CONTENT_TYPE = {
+  TEXT_HTML:'text/html; charset=UTF-8',
+  APPLICATION_JAVASCRIPT:'application/javascript; charset=UTF-8',
+  APPLICATION_JSON:'application/json; charset=UTF-8',
+  TEXT_CSS:'text/css; charset=UTF-8',
+  TEXT_PLAIN:'text/html; charset=utf-8',
+};
+
 const sleep = seconds => {
   return new Promise((resolve) => {
     setTimeout(resolve, seconds);
@@ -292,5 +300,6 @@ module.exports = {
   stopTestServer,
 
   request,
-  request2
+  request2,
+  CONTENT_TYPE,
 };

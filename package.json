@@ -17,6 +17,9 @@
     "test": "nyc mocha"
   },
   "dependencies": {
+    "express": "^4.17.1",
+    "express-static-gzip": "^2.0.6",
+    "helmet-csp": "^2.10.0",
     "stdio": "0.2.7"
   },
   "devDependencies": {

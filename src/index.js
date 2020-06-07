@@ -11,7 +11,6 @@
  */
 
 const path = require('path');
-const fs = require('fs');
 const https = require('https');
 const { constants: cryptoConstants } = require('crypto');
 
@@ -53,16 +52,16 @@ const serviceFor = config['service-for'] || name;
 //process.stdout.write(`[config]:${JSON.stringify(config)}\n`);
 process.stdout.write(`[serviceFor]:${serviceFor}\n`);
 // mime
-const mimeList = {
-  js: 'text/javascript',
-  css: 'text/css',
-  json: 'application/json',
-  png: 'image/png',
-  jpg: 'image/jpg',
-  svg: 'image/svg+xml'
-};
-const mimeDefault = 'text/html';
-const mimeError = 'text/plain';
+// const mimeList = {
+//   js: 'text/javascript',
+//   css: 'text/css',
+//   json: 'application/json',
+//   png: 'image/png',
+//   jpg: 'image/jpg',
+//   svg: 'image/svg+xml'
+// };
+// const mimeDefault = 'text/html';
+// const mimeError = 'text/plain';
 
 // server static folder
 process.stdout.write(`[${serviceFor}] paths will be served:\n`);
@@ -74,101 +73,101 @@ for (let one of config.paths) {
 }
 
 // define app
-const requestHandler = (request, response) => {
-  let url = request.url;
-  if (url.substr(-1) === '/') {
-    url = url + 'index.html';
-  }
+// const requestHandler = (request, response) => {
+//   let url = request.url;
+//   if (url.substr(-1) === '/') {
+//     url = url + 'index.html';
+//   }
 
-  // write log
-  const writeLog = (url, code, file) => {
-    if (!params.verbose) {
-      return;
-    }
+//   // write log
+//   const writeLog = (url, code, file) => {
+//     if (!params.verbose) {
+//       return;
+//     }
 
-    const ts = new Date();
-    const tss = ts.toUTCString();
-    process.stdout.write(`[${serviceFor}][${tss}] ${request.url} ${code} ${file}\n`);
-  };
+//     const ts = new Date();
+//     const tss = ts.toUTCString();
+//     process.stdout.write(`[${serviceFor}][${tss}] ${request.url} ${code} ${file}\n`);
+//   };
 
-  // locate dir based on path
-  let baseuri = null;
-  let basedir = null;
-  let file = null;
-  for (let one of paths) {
-    if (url.substr(0, one.uri.length) === one.uri) {
-      baseuri = one.uri;
-      basedir = one.dir;
-      break;
-    }
-  }
-  if (baseuri) {
-    file = path.resolve(basedir, url.substr(
-      baseuri.substr(-1) === '/' ? baseuri.length : baseuri.length + 1
-    ));
+//   // locate dir based on path
+//   let baseuri = null;
+//   let basedir = null;
+//   let file = null;
+//   for (let one of paths) {
+//     if (url.substr(0, one.uri.length) === one.uri) {
+//       baseuri = one.uri;
+//       basedir = one.dir;
+//       break;
+//     }
+//   }
+//   if (baseuri) {
+//     file = path.resolve(basedir, url.substr(
+//       baseuri.substr(-1) === '/' ? baseuri.length : baseuri.length + 1
+//     ));
 
     
-    if(file !==null && file.endsWith('min.js')) {
-      const gzpath = path.resolve(file+'.gz');
-      if(fs.existsSync(gzpath)) {
-        file = gzpath;
-      }
-    }
-  }
+//     if(file !==null && file.endsWith('min.js')) {
+//       const gzpath = path.resolve(file+'.gz');
+//       if(fs.existsSync(gzpath)) {
+//         file = gzpath;
+//       }
+//     }
+//   }
 
-  // decide content type
-  const ext = url.split(/\./).slice(-1)[0].toLowerCase();
-  let contentType = (ext && mimeList[ext]) || mimeDefault;
-  const contentEncoding = (file !== null && file.endsWith('.gz')) ? 'gzip' : '';
+//   // decide content type
+//   const ext = url.split(/\./).slice(-1)[0].toLowerCase();
+//   let contentType = (ext && mimeList[ext]) || mimeDefault;
+//   const contentEncoding = (file !== null && file.endsWith('.gz')) ? 'gzip' : '';
   
-  // check CSP settings
-  if (config.csp) {
-    // check frame-ancestors settings
-    if (config.csp['frame-ancestors']) {
-      const frameAncestors = config.csp['frame-ancestors'].join(' ').trim().toLowerCase();
-      if (frameAncestors) {
-        response.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
-      }
-    }
-  }
+//   // check CSP settings
+//   if (config.csp) {
+//     // check frame-ancestors settings
+//     if (config.csp['frame-ancestors']) {
+//       const frameAncestors = config.csp['frame-ancestors'].join(' ').trim().toLowerCase();
+//       if (frameAncestors) {
+//         response.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
+//       }
+//     }
+//   }
 
-  if (file) {
-    // read file
-    fs.readFile(file, (error, content) => {
-      if (error) {
-        if (error.code == 'ENOENT') {
-          writeLog(request.url, 404, file);
-          response.writeHead(404, { 'Content-Type': mimeError });
-          response.end('File not found');
-        } else if (error.code == 'EISDIR') {
-          writeLog(request.url, 301, file);
-          response.writeHead(301, {
-            'Content-Type': mimeError,
-            'Location': `${request.url}/`
-          });
-          response.end('Moved Permanently');
-        } else {
-          writeLog(request.url, 500, `error#${error.code}`);
-          response.writeHead(500, { 'Content-Type': mimeError });
-          response.end(`Read file failed with error: ${error.code} ..\n`);
-          response.end();
-        }
-      } else {
-        writeLog(request.url, 200, file);
-        let headers = {'Content-Type': contentType};
-        if(contentEncoding>'') {
-          headers['Content-Encoding'] = contentEncoding;
-        }
-        response.writeHead(200, headers);
-        response.end(content);
-      }
-    });
-  } else {
-    writeLog(request.url, 404, 'error#');
-    response.writeHead(404, { 'Content-Type': mimeError });
-    response.end('File not found');
-  }
-};
+//   if (file) {
+//     // read file
+//     fs.readFile(file, (error, content) => {
+//       if (error) {
+//         if (error.code == 'ENOENT') {
+//           writeLog(request.url, 404, file);
+//           response.writeHead(404, { 'Content-Type': mimeError });
+//           response.end('File not found');
+//         } else if (error.code == 'EISDIR') {
+//           writeLog(request.url, 301, file);
+//           response.writeHead(301, {
+//             'Content-Type': mimeError,
+//             'Location': `${request.url}/`
+//           });
+//           response.end('Moved Permanently');
+//         } else {
+//           writeLog(request.url, 500, `error#${error.code}`);
+//           response.writeHead(500, { 'Content-Type': mimeError });
+//           response.end(`Read file failed with error: ${error.code} ..\n`);
+//           response.end();
+//         }
+//       } else {
+//         writeLog(request.url, 200, file);
+//         let headers = {'Content-Type': contentType};
+//         if(contentEncoding>'') {
+//           headers['Content-Encoding'] = contentEncoding;
+//         }
+//         response.writeHead(200, headers);
+//         response.end(content);
+//       }
+//     });
+//   } else {
+//     writeLog(request.url, 404, 'error#');
+//     response.writeHead(404, { 'Content-Type': mimeError });
+//     response.end('File not found');
+//   }
+// };
 
 // start server
 try {
@@ -193,10 +192,23 @@ try {
     'ECDHE-ECDSA-AES128-SHA256',
     'ECDHE-ECDSA-AES256-SHA384'].join(':');
     
-  https.createServer(config.https, requestHandler)
-    .listen(config.port, '0.0.0.0', () => {
-      process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...\n\n`);
-    });
+  // https.createServer(config.https, requestHandler)
+  //   .listen(config.port, '0.0.0.0', () => {
+  //     process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...\n\n`);
+  //   });
+
+  const express = require('express');
+  const expressStaticGzip = require('express-static-gzip');
+  const app = express();
+  const csp = require('helmet-csp');
+  app.disable('x-powered-by');
+  if(config.csp['frame-ancestors'].length>0) {
+    app.use(csp({directives: {frameAncestors:config.csp['frame-ancestors']}}));
+  }
+  app.use(paths[0].uri,expressStaticGzip(paths[0].dir));
+  const httpsServer = https.createServer(config.https, app);
+  httpsServer.listen(config.port, () => { process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...\n\n`);});
+
 } catch (err) {
   process.stderr.write(`[${serviceFor}] is failed to start, error:\n`);
   process.stderr.write(`[${serviceFor}] ${err}\n\n`);

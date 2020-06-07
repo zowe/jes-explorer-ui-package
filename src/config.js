@@ -52,8 +52,10 @@ function validateParams (param) {
 function parseCsp(config) {
   if(config && config.csp && config.csp['frame-ancestors']) {
     const frames=config.csp['frame-ancestors'];
-    if(frames.length>0) {
+    if(frames.length>0 && frames[0]>'') {
       config.csp['frame-ancestors'] = config.csp['frame-ancestors'][0].split(',');
+    } else {
+      config.csp['frame-ancestors'] = [];
     }
   }
   return config;

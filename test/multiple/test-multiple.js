@@ -34,7 +34,7 @@ describe('test with 2 paths mounted on /relpath1 and /relpath2', function() {
 
     expect(res).to.have.property('status');
     expect(res.status).to.equal(404);
-    expect(res.headers).to.include({ 'content-type': 'text/plain' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_PLAIN });
   });
 
   it('should return index.html when requesting /relpath1 if follow redirect', async function() {
@@ -44,7 +44,7 @@ describe('test with 2 paths mounted on /relpath1 and /relpath2', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('index page');
-    expect(res.headers).to.include({ 'content-type': 'text/html' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_HTML });
   });
 
   it.skip('should return index.html when requesting /relpath2 if follow redirect', async function() {
@@ -54,7 +54,7 @@ describe('test with 2 paths mounted on /relpath1 and /relpath2', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('index page');
-    expect(res.headers).to.include({ 'content-type': 'text/html' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_HTML });
   });
 
   it('should return 404 error when requesting /relpath3', async function() {
@@ -62,6 +62,6 @@ describe('test with 2 paths mounted on /relpath1 and /relpath2', function() {
 
     expect(res).to.have.property('status');
     expect(res.status).to.equal(404);
-    expect(res.headers).to.include({ 'content-type': 'text/plain' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_PLAIN });
   });
 });

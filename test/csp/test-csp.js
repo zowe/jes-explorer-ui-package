@@ -38,7 +38,7 @@ describe('test with 1 path mounted on /', function() {
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('index page');
     expect(res.headers).to.include({
-      'content-type': 'text/html',
+      'content-type': U.CONTENT_TYPE.TEXT_HTML,
       'content-security-policy': 'frame-ancestors https://test.zowe.org/*'
     });
   });

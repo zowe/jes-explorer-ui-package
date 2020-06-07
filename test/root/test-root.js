@@ -36,7 +36,7 @@ describe('test with 1 path mounted on /', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('index page');
-    expect(res.headers).to.include({ 'content-type': 'text/html' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_HTML });
   });
 
   it('should return page1.html when requesting /page1.html', async function() {
@@ -46,7 +46,7 @@ describe('test with 1 path mounted on /', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('page1');
-    expect(res.headers).to.include({ 'content-type': 'text/html' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_HTML });
   });
 
   it('should return 404 error when requesting /page-not-exists.html', async function() {
@@ -54,7 +54,7 @@ describe('test with 1 path mounted on /', function() {
 
     expect(res).to.have.property('status');
     expect(res.status).to.equal(404);
-    expect(res.headers).to.include({ 'content-type': 'text/plain' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_PLAIN });
   });
 
   it('should return index.html when requesting /path1 if follow redirect', async function() {
@@ -64,7 +64,7 @@ describe('test with 1 path mounted on /', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('path1');
-    expect(res.headers).to.include({ 'content-type': 'text/html' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_HTML });
   });
 
   it('should return 301 when requesting /path1', async function() {
@@ -72,7 +72,7 @@ describe('test with 1 path mounted on /', function() {
 
     expect(res).to.have.property('status');
     expect(res.status).to.equal(301);
-    expect(res.headers).to.include({ 'content-type': 'text/plain', location: '/path1/', });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_HTML, location: '/path1/', });
   });
 
   it('should return page2.html when requesting /path1/page2.html', async function() {
@@ -82,7 +82,7 @@ describe('test with 1 path mounted on /', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('page2');
-    expect(res.headers).to.include({ 'content-type': 'text/html' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_HTML });
   });
 
   it('should return 404 error when requesting /path1/page-not-exists.html', async function() {
@@ -90,7 +90,7 @@ describe('test with 1 path mounted on /', function() {
 
     expect(res).to.have.property('status');
     expect(res.status).to.equal(404);
-    expect(res.headers).to.include({ 'content-type': 'text/plain' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_PLAIN });
   });
 
   it('should return svg image when requesting /assets/HTML5_Logo.svg', async function() {
@@ -116,7 +116,7 @@ describe('test with 1 path mounted on /', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.an('object');
     expect(res.data.ok).to.equal('yes');
-    expect(res.headers).to.include({ 'content-type': 'application/json' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.APPLICATION_JSON });
   });
 
   it('should return svg image when requesting /assets/javascript.js', async function() {
@@ -126,7 +126,7 @@ describe('test with 1 path mounted on /', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('javascript test');
-    expect(res.headers).to.include({ 'content-type': 'text/javascript' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.APPLICATION_JAVASCRIPT });
   });
 
   it('should return svg image when requesting /assets/css.css', async function() {
@@ -136,6 +136,6 @@ describe('test with 1 path mounted on /', function() {
     expect(res.status).to.equal(200);
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('.custome-class');
-    expect(res.headers).to.include({ 'content-type': 'text/css' });
+    expect(res.headers).to.include({ 'content-type': U.CONTENT_TYPE.TEXT_CSS });
   });
 });
