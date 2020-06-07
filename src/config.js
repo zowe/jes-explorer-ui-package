@@ -9,6 +9,9 @@
  */
 
 const fs = require('fs');
+const path = require('path');
+const rootDir = path.resolve(__dirname, '..');
+const pkg = require('../package.json');
 
 function validateParams (param) {
 
@@ -74,6 +77,24 @@ function loadHttpsCerts(config) {
   return config;
 }
 
+function loadPaths(config) {
+  const paths = [];
+  for (let one of config.paths) {
+    const baseDir = path.resolve(rootDir, one.dir);
+    process.stdout.write(`[${config.serviceFor}]   - ${one.uri} => ${baseDir}\n`);
+    paths.push({ uri: one.uri, dir: baseDir });
+  }
+  config.paths = paths;
+  return config;
+}
+
+function loadPackageMeta(config) {
+  config.version = pkg && pkg.version;
+  config.scriptName = pkg && pkg.name;
+  config.serviceFor = config['service-for'] || config.scriptName;
+  return config;
+}
+
 function loadParams(params) {
 
   if(params.verbose) {
@@ -110,5 +131,7 @@ module.exports = (params) => {
   let config = loadParams(params);
   config=parseCsp(config);
   config=loadHttpsCerts(config);
+  config=loadPaths(config);
+  config=loadPackageMeta(config);
   return config;
 };
