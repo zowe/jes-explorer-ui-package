@@ -27,7 +27,7 @@ process.stdout.write(`[version]:${version}\n`);
 process.stdout.write(`[script name]:${name}\n`);
 
 const stdio = require('stdio');
-const ops = stdio.getopt({
+const params = stdio.getopt({
   'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
   'path': {key: 'b', args:1,    description: 'base path uri', default:''},
   'dir': {key: 'd',  args:1, description: 'base dir', default: '../app'},
@@ -40,74 +40,10 @@ const ops = stdio.getopt({
   'verbose': {key: 'v', default:false}
 });
 
-if(ops.verbose) {
-  process.stdout.write(`[args]:${JSON.stringify(ops)}\n`);
-}
-
-validateParams(ops);
-
-
-const paramConfig = {
-  'service-for': ops.service,
-  'paths': [{
-    'uri': ops.path,
-    'dir': ops.dir
-  }],
-  'port': ops.port,
-  'https': {
-    'key': ops.key,
-    'cert': ops.cert,
-    'pfx': ops.pfx,
-    'passphrase': ops.pass,
-  },
-  'csp': {
-    'frame-ancestors': [ops.csp]
-  }
-};
-
-function validateParams (param) {
-
-  let isValid = true;
-
-  const serviceFor=param.service;
-
-  if((param.path==='' || !param.path) && isValid) {
-    isValid = false;
-    process.stderr.write(`[${serviceFor}] paths configuration is missing\n`);
-  }
-
-  if((param.port==='' || !param.port) && isValid) {
-    isValid = false;
-    process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
-  }
-
-  if( (param.key==='' && param.cert==='' && param.pfx==='' && param.pass==='') && isValid) {
-    isValid = false;
-    process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
-  }
-
-  if( ( (param.key==='' && param.cert>'') || (param.key>'' && param.cert==='')
-      || (param.pfx==='' && param.pass>'' && param.key==='' && param.cert==='')
-      || (param.pfx==='' && param.pass>'' && !(param.key>'' && param.cert>'')) 
-      || (param.pfx>'' && param.pass==='') ) && isValid) {
-    isValid = false;
-    process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
-  }
-
-  if(!isValid) {
-    process.stderr.write(`[${serviceFor}] is failed to start, error:\n`);
-    param.printHelp();
-    process.exit(1);
-    return false;
-  }
-
-  return true;
-}
-
 // load config
 let config;
 try {
-  config = require('./config')(paramConfig);
+  config = require('./config')(params);
 } catch (err) {
   process.stderr.write('failed to process config\n');
   process.stderr.write(`${err}\n\n`);
@@ -146,7 +82,7 @@ const requestHandler = (request, response) => {
 
   // write log
   const writeLog = (url, code, file) => {
-    if (!ops.verbose) {
+    if (!params.verbose) {
       return;
     }
 
