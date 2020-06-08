@@ -9,6 +9,9 @@
  */
 
 const fs = require('fs');
+const path = require('path');
+const rootDir = path.resolve(__dirname, '..');
+const pkg = require('../package.json');
 
 function validateParams (param) {
 
@@ -52,8 +55,10 @@ function validateParams (param) {
 function parseCsp(config) {
   if(config && config.csp && config.csp['frame-ancestors']) {
     const frames=config.csp['frame-ancestors'];
-    if(frames.length>0) {
+    if(frames.length>0 && frames[0]>'') {
       config.csp['frame-ancestors'] = config.csp['frame-ancestors'][0].split(',');
+    } else {
+      config.csp['frame-ancestors'] = [];
     }
   }
   return config;
@@ -69,6 +74,25 @@ function loadHttpsCerts(config) {
       }
     });
   }
+  return config;
+}
+
+function loadPaths(config) {
+  const paths = [];
+  for (let one of config.paths) {
+    const baseDir = path.resolve(rootDir, one.dir);
+    process.stdout.write(`[${config.serviceFor}]   - ${one.uri} => ${baseDir}\n`);
+    paths.push({ uri: one.uri, dir: baseDir });
+  }
+  config.paths = paths;
+  return config;
+}
+
+function loadPackageMeta(config) {
+  config.version = pkg && pkg.version;
+  config.scriptName = pkg && pkg.name;
+  config.serviceFor = config['service-for'] || config.scriptName;
+  config.rootDir = rootDir;
   return config;
 }
 
@@ -106,7 +130,9 @@ function loadParams(params) {
 
 module.exports = (params) => {
   let config = loadParams(params);
+  config=loadPackageMeta(config);
   config=parseCsp(config);
   config=loadHttpsCerts(config);
+  config=loadPaths(config);
   return config;
 };
