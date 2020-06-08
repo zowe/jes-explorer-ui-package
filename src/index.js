@@ -31,7 +31,7 @@ try {
   config = require('./config')(params);
   process.stdout.write(`[rootDir]:${config.rootDir}\n`);
   process.stdout.write(`[version]:${config.version}\n`);
-  process.stdout.write(`[script name]:${config.name}\n`);
+  process.stdout.write(`[script name]:${config.scriptName}\n`);
   process.stdout.write(`[serviceFor]:${config.serviceFor}\n`);
   process.stdout.write(`[paths]:${JSON.stringify(config.paths)}\n`);
 } catch (err) {

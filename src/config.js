@@ -92,6 +92,7 @@ function loadPackageMeta(config) {
   config.version = pkg && pkg.version;
   config.scriptName = pkg && pkg.name;
   config.serviceFor = config['service-for'] || config.scriptName;
+  config.rootDir = rootDir;
   return config;
 }
 
@@ -129,9 +130,9 @@ function loadParams(params) {
 
 module.exports = (params) => {
   let config = loadParams(params);
+  config=loadPackageMeta(config);
   config=parseCsp(config);
   config=loadHttpsCerts(config);
   config=loadPaths(config);
-  config=loadPackageMeta(config);
   return config;
 };
