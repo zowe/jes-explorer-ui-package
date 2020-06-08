@@ -138,11 +138,11 @@ const handleFileReadSuccess = (request, response, url, file, content) => {
   // TODO: it can be its own handler/middleware
   response = attachCSPHeader(response);
 
-  // decide content type
+  // set content headers
   const contentType = mapUrlToContentType(url);
   const contentEncoding = mapFileToContentEncoding(file);
   
-  // read file
+  // send file content
   writeLog(request.url, 200, file);
   let headers = {'Content-Type': contentType};
   if(contentEncoding>'') {
@@ -154,17 +154,17 @@ const handleFileReadSuccess = (request, response, url, file, content) => {
 
 // define app
 const requestHandler = (request, response) => {
-  process.stdout.write(`[request]:${request.url}\n`);
+  // process.stdout.write(`[request]:${request.url}\n`);
 
   const targetUrl = mapRequestToUrl(request);
   const targetFile = mapUrlToFile(targetUrl);
 
-  process.stdout.write(`[targetUrl]:${targetUrl}\n`);
-  process.stdout.write(`[targetFile]:${targetFile}\n`);
+  // process.stdout.write(`[targetUrl]:${targetUrl}\n`);
+  // process.stdout.write(`[targetFile]:${targetFile}\n`);
 
 
   if(targetFile === null) {
-    process.stdout.write(`[targetFile]:${targetFile} not found\n`);
+    // process.stdout.write(`[targetFile]:${targetFile} not found\n`);
     send404(request, response, {code:'ENOFILE'});
     return;
   }
@@ -173,13 +173,13 @@ const requestHandler = (request, response) => {
   fs.readFile(targetFile, (error, content) => {
     // file read error
     if (error) {
-      process.stdout.write(`[targetFile]:${targetFile} error\n`);
+      // process.stdout.write(`[targetFile]:${targetFile} error\n`);
       handleFileReadError(request, response, targetFile, error);
       return;
     } 
     // file read success
     else {
-      process.stdout.write(`[targetFile]:${targetFile} success\n`);
+      // process.stdout.write(`[targetFile]:${targetFile} success\n`);
       handleFileReadSuccess(request, response, targetUrl, targetFile, content);
     }
   });
