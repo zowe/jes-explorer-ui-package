@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const cache = new Map();
 
 
 // mime
@@ -152,6 +153,37 @@ const handleFileReadSuccess = (request, response, url, file, content) => {
   response.end(content);
 };
 
+const readFile = (request, file) => new Promise((resolve, reject) => {
+  const absPath = path.resolve(file);
+
+  // Read File from cache
+  if (cache.has(absPath)) {
+    resolve(cache.get(absPath));
+    return;
+  }
+
+  // update cache
+  updateCache(request, absPath).then((data) => {
+    resolve(data);
+  }).catch((error)=>{
+    reject(error);
+  });
+
+});
+
+const updateCache = (request, file) => new Promise((resolve, reject) => {
+  const absPath = path.resolve(file);
+  // Read File from disk
+  fs.readFile(absPath, (error, data) => {
+    if (error) {
+      reject(error);
+      return;
+    }
+    cache.set(absPath, data);
+    resolve(data);
+  });
+});
+
 // define app
 const requestHandler = (request, response) => {
   // process.stdout.write(`[request]:${request.url}\n`);
@@ -170,20 +202,20 @@ const requestHandler = (request, response) => {
   }
 
   //read file
-  fs.readFile(targetFile, (error, content) => {
-    // file read error
-    if (error) {
-      // process.stdout.write(`[targetFile]:${targetFile} error\n`);
-      handleFileReadError(request, response, targetFile, error);
-      return;
-    } 
-    // file read success
-    else {
-      // process.stdout.write(`[targetFile]:${targetFile} success\n`);
-      handleFileReadSuccess(request, response, targetUrl, targetFile, content);
-    }
+  const fileContent = readFile(request, targetFile);
+  
+  // file read success
+  fileContent.then((content)=>{
+    // process.stdout.write(`[targetFile]:${targetFile} success\n`);
+    handleFileReadSuccess(request, response, targetUrl, targetFile, content);
   });
 
+  // file read error
+  fileContent.catch((error)=> {
+    // process.stdout.write(`[targetFile]:${targetFile} error\n`);
+    handleFileReadError(request, response, targetFile, error);
+    return;
+  });
 };
 
 module.exports = (config) => {
