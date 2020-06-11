@@ -10,7 +10,8 @@
             "name": "run ui-server",
             "program": "${workspaceFolder}\\src\\index.js",
              //"args": ["-s", "jes", "-b", "/ui/v1/explorer-jes", "-p", "7554", "-k", "C:\\zowe\\explorer-componentisation\\configs\\server.key", "-c", "C:\\zowe\\explorer-componentisation\\configs\\server.cert", "-x", "", "-w", "", "-f", "https://tvt5003.svl.ibm.com"],
-            "args": [ "-s", "jes", "-b", "/", "-p", "8080", "-f", "https://test.zowe.org/*", "-k", "../../configs/server.key", "-c", "../../configs/server.cert" ]
+             //"args": [ "-s", "jes", "-b", "/", "-p", "9090", "-f", "https://test.zowe.org/*", "-k", "configs/server.key", "-c", "configs/server.cert" ]
+             "args": [ "-s", "", "-b", "/relpath", "-d", "public","-p", "9090", "-f", "https://test.zowe.org/*", "-k", "configs/server.key", "-c", "configs/server.cert" ]
         },
         {
             "type": "node",
@@ -35,7 +36,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}\\test\\csp\\test-csp.js"
+                "${workspaceFolder}\\test\\relpath\\test-relpath.js"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"

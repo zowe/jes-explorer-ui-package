@@ -10,7 +10,7 @@ Provide simple HTTPS server to server Zowe Desktop Explorer plugins.
 npm start
 ```
 
-Then visit `https://localhost:8080` to access the test server. The default config file is `configs/config-default.json`.
+Then visit `https://localhost:9090` to access the test server. The default config file is `configs/config-default.json`.
 
 ## CLI Options
 
