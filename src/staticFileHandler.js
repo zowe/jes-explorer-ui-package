@@ -153,11 +153,12 @@ const handleFileReadSuccess = (request, response, url, file, content) => {
   response.end(content);
 };
 
-const readFile = (request, file) => new Promise((resolve, reject) => {
+const readFile = (request, response, file) => new Promise((resolve, reject) => {
   const absPath = path.resolve(file);
 
   // Read File from cache
   if (cache.has(absPath)) {
+    response.setHeader('X-ZOWE-UI-SERVER-CACHE', 'true');
     resolve(cache.get(absPath));
     return;
   }
@@ -202,7 +203,7 @@ const requestHandler = (request, response) => {
   }
 
   //read file
-  const fileContent = readFile(request, targetFile);
+  const fileContent = readFile(request, response, targetFile);
   
   // file read success
   fileContent.then((content)=>{

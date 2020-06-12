@@ -164,7 +164,7 @@ describe('test with 1 path mounted on /relpath', function() {
     expect(res.data).to.be.a('string');
     expect(res.data).to.include('javascript test');
     expect(res.headers).to.include({ 'content-type': 'text/javascript' });
-    expect(res.headers).to.not.include({ 'content-type': '' });
+    expect(res.headers).to.not.include({ 'content-encoding': '' });
   });
 
   it('should return gz file if exists when requesting /relpath/assets/javascript2.min.js', async function() {
