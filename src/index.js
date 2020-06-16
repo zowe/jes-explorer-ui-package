@@ -21,6 +21,16 @@ const version = pkg && pkg.version;
 const name = pkg && pkg.name;
 const rootDir = path.resolve(__dirname, '..');
 
+const os = require('os');
+let keyring_js;
+try {
+  if (os.platform() == 'os390') {
+    keyring_js = require('keyring_js');
+  }
+} catch (e) {
+  process.stdout.write(`[${serviceFor}] Could not load zcrypto library, SAF keyrings will be unavailable\n`);
+}
+
 // define args
 var argv = require('yargs')
   .version(version)
@@ -54,6 +64,21 @@ var argv = require('yargs')
     alias: 'cert',
     default: '',
     description: 'server cert',
+  })
+  .option('n', {
+    alias: 'keyring',
+    default: '',
+    description: 'keyring name',
+  })
+  .option('l', {
+    alias: 'keyring-label',
+    default: '',
+    description: 'certificate label in keyring',
+  })
+  .option('o', {
+    alias: 'keyring-owner',
+    default: '',
+    description: 'keyring owner id',
   })
   .option('x', {
     alias: 'pfx',
@@ -117,15 +142,10 @@ function validateParams (argv) {
     process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
   }
 
-  if( (argv.k==='' && argv.c==='' && argv.x==='' && argv.w==='') && isValid) {
-    isValid = false;
-    process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
-  }
-
-  if( ( (argv.k==='' && argv.c>'') || (argv.k>'' && argv.c==='')
-      || (argv.x==='' && argv.w>'' && argv.k==='' && argv.c==='')
-      || (argv.x==='' && argv.w>'' && !(argv.k>'' && argv.c>'')) 
-      || (argv.x>'' && argv.w==='') ) && isValid) {
+  if (((argv.k === '' && argv.c > '') || (argv.k > '' && argv.c === '')
+    || (argv.x === '' && argv.w > '' && argv.k === '' && argv.c === '')
+    || (argv.x === '' && argv.w > '' && !(argv.k > '' && argv.c > ''))
+    || (argv.x > '' && argv.w === '')) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
@@ -149,6 +169,36 @@ try {
   process.exit(1);
 }
 const serviceFor = config['service-for'] || name;
+
+//load keyring
+if (config.https.key === '' && config.https.cert === '') {
+  process.stdout.write(`[${serviceFor}] key and certificate not found, attempting to load from keyring\n`);
+  process.stdout.write(`[${argv.n}] \n`);
+  if ((argv.o > '' || argv.o) && (argv.n > '' || argv.n ) && (argv.l > '' || argv.l)){
+    if (keyring_js) {
+      try {
+        const keyringData = keyring_js.getPemEncodedData(argv.o, argv.n, argv.l);
+        config.https.cert = keyringData.certificate;
+        config.https.key = keyringData.key;
+      } catch (err) {
+        process.stderr.write(`[${serviceFor}] exception thrown when reading SAF keyring\n`);
+        process.stderr.write(`${err}\n\n`);
+        process.exit(1);
+      }
+    } else {
+      process.stderr.write(`[${serviceFor}] cannot load SAF keyring due to missing keyring_js library\n`);
+      process.exit(1);
+    }
+  }else{
+    process.stderr.write(`[${serviceFor}] keyring configuration is missing\n`);
+    process.exit(1);
+  }
+
+  if(config.https.key === '' && config.https.cert === ''){
+    process.stderr.write(`[${serviceFor}] failed to process keyring\n`);
+    process.exit(1);
+  }
+}
 
 // mime
 const mimeList = {
@@ -277,7 +327,7 @@ try {
     'ECDHE-ECDSA-AES256-GCM-SHA384',
     'ECDHE-ECDSA-AES128-SHA256',
     'ECDHE-ECDSA-AES256-SHA384'].join(':');
-    
+
   https.createServer(config.https, requestHandler)
     .listen(config.port, '0.0.0.0', () => {
       process.stdout.write(`[${serviceFor}] is started and listening on ${config.port}...\n\n`);
