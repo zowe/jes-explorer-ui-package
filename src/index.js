@@ -173,7 +173,6 @@ const serviceFor = config['service-for'] || name;
 //load keyring
 if (config.https.key === '' && config.https.cert === '') {
   process.stdout.write(`[${serviceFor}] key and certificate not found, attempting to load from keyring\n`);
-  process.stdout.write(`[${argv.n}] \n`);
   if ((argv.o > '' || argv.o) && (argv.n > '' || argv.n ) && (argv.l > '' || argv.l)){
     if (keyring_js) {
       try {
