@@ -12,7 +12,7 @@ const expect = require('chai').expect;
 const debug = require('debug')('test:explorer-ui-server:relpath');
 
 const U = require('../utils');
-const TEST_SERVER_PORT = 8080;
+const TEST_SERVER_PORT = 9090;
 
 let serverPid;
 
@@ -117,7 +117,7 @@ describe('test with 1 path mounted on /relpath', function() {
     expect(res.headers).to.include({ 'content-type': 'image/svg+xml' });
   });
 
-  it('should return svg image when requesting /relpath/assets/HTML5_Logo_32.png', async function() {
+  it('should return png image when requesting /relpath/assets/HTML5_Logo_32.png', async function() {
     const res = await U.request(this, '/relpath/assets/HTML5_Logo_32.png', TEST_SERVER_PORT);
 
     expect(res).to.have.property('status');
@@ -125,7 +125,7 @@ describe('test with 1 path mounted on /relpath', function() {
     expect(res.headers).to.include({ 'content-type': 'image/png' });
   });
 
-  it('should return svg image when requesting /relpath/assets/json.json', async function() {
+  it('should return json when requesting /relpath/assets/json.json', async function() {
     const res = await U.request(this, '/relpath/assets/json.json', TEST_SERVER_PORT);
 
     expect(res).to.have.property('status');
@@ -135,7 +135,7 @@ describe('test with 1 path mounted on /relpath', function() {
     expect(res.headers).to.include({ 'content-type': 'application/json' });
   });
 
-  it('should return svg image when requesting /relpath/assets/javascript.js', async function() {
+  it('should return js file when requesting /relpath/assets/javascript.js', async function() {
     const res = await U.request(this, '/relpath/assets/javascript.js', TEST_SERVER_PORT);
 
     expect(res).to.have.property('status');
@@ -145,7 +145,41 @@ describe('test with 1 path mounted on /relpath', function() {
     expect(res.headers).to.include({ 'content-type': 'text/javascript' });
   });
 
-  it('should return svg image when requesting /relpath/assets/css.css', async function() {
+  it('should return js file even when js.gz file exists requesting /relpath/assets/javascript.js', async function() {
+    const res = await U.request(this, '/relpath/assets/javascript.js', TEST_SERVER_PORT);
+
+    expect(res).to.have.property('status');
+    expect(res.status).to.equal(200);
+    expect(res.data).to.be.a('string');
+    expect(res.data).to.include('javascript test');
+    expect(res.data).to.not.include('cnvyr.min.js.gz');
+    expect(res.headers).to.include({ 'content-type': 'text/javascript' });
+  });
+
+  it('should return min.js file when no min.js.gz file when requesting /relpath/assets/javascript1.min.js', async function() {
+    const res = await U.request(this, '/relpath/assets/javascript1.min.js', TEST_SERVER_PORT);
+
+    expect(res).to.have.property('status');
+    expect(res.status).to.equal(200);
+    expect(res.data).to.be.a('string');
+    expect(res.data).to.include('javascript test');
+    expect(res.headers).to.include({ 'content-type': 'text/javascript' });
+    expect(res.headers).to.not.include({ 'content-encoding': '' });
+  });
+
+  it('should return gz file if exists when requesting /relpath/assets/javascript2.min.js', async function() {
+    const {res,data} = await U.request2(this, '/relpath/assets/javascript2.min.js', TEST_SERVER_PORT);
+
+    expect(res).to.have.property('status');
+    expect(res.status).to.equal(200);
+    expect(data).to.be.a('string');
+    expect(data).to.include('javascript test');
+    expect(data).to.include('cnvyr.min.js.gz');
+    expect(res.headers.get('content-type')).to.equal('text/javascript');
+    expect(res.headers.get('content-encoding')).to.equal('gzip');
+  });
+
+  it('should return css when requesting /relpath/assets/css.css', async function() {
     const res = await U.request(this, '/relpath/assets/css.css', TEST_SERVER_PORT);
 
     expect(res).to.have.property('status');

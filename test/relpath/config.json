@@ -4,7 +4,7 @@
     "uri": "/relpath",
     "dir": "public"
   }],
-  "port": 8080,
+  "port": 9090,
   "https": {
     "key": "configs/server.key",
     "cert": "configs/server.cert"
