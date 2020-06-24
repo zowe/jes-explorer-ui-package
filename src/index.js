@@ -22,6 +22,9 @@ const params = stdio.getopt({
   'pfx': {key: 'x', args:1, description: 'server pfx', default:''},
   'pass': {key: 'w', args:1, description: 'server pfx passphrase', default:''},
   'csp': {key: 'f', args:1, description: 'csp whitelist ancestors frames', default:''},
+  'keyring': {key: 'n', args:1, description: 'keyring name', default:''},
+  'keyring-owner': {key: 'o', args:1, description: 'keyring owner id', default:''},
+  'keyring-label': {key: 'l', args:1, description: 'keyring certificate label', default:''},
   'verbose': {key: 'v', default:false}
 });
 

@@ -13,6 +13,16 @@ const path = require('path');
 const rootDir = path.resolve(__dirname, '..');
 const pkg = require('../package.json');
 
+const os = require('os');
+let keyring_js;
+try {
+  if (os.platform() == 'os390') {
+    keyring_js = require('keyring_js');
+  }
+} catch (e) {
+  process.stdout.write('Could not load zcrypto library, SAF keyrings will be unavailable\n');
+}
+
 function validateParams (param) {
 
   let isValid = true;
@@ -29,14 +39,14 @@ function validateParams (param) {
     process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
   }
 
-  if( (param.key==='' && param.cert==='' && param.pfx==='' && param.pass==='') && isValid) {
+  if( (param.key==='' && param.cert==='' && param.pfx==='' && param.pass==='' && param['keyring-owner']==='' && param['keyring'] ==='' && param['keyring-label']==='') && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
 
   if( ( (param.key==='' && param.cert>'') || (param.key>'' && param.cert==='')
       || (param.pfx==='' && param.pass>'' && param.key==='' && param.cert==='')
-      || (param.pfx==='' && param.pass>'' && !(param.key>'' && param.cert>'')) 
+      || (param.pfx==='' && param.pass>'' && !(param.key>'' && param.cert>''))
       || (param.pfx>'' && param.pass==='') ) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
@@ -73,6 +83,38 @@ function loadHttpsCerts(config) {
         config.https[key] = fs.readFileSync(file);
       }
     });
+  }
+  return config;
+}
+
+function loadKeyringCerts(param, config) {
+  const serviceFor=param.service;
+  if (config.https.key === '' && config.https.cert === '') {
+    process.stdout.write(`[${serviceFor}] key and certificate not found, attempting to load from keyring\n`);
+    if ((param['keyring-owner'] > '' || param['keyring-owner'] ) && (param['keyring'] > '' || param['keyring'] ) && ( param['keyring-label'] > '' || param['keyring-label'])){
+      if (keyring_js) {
+        try {
+          const keyringData = keyring_js.getPemEncodedData(param['keyring-owner'], param['keyring'], param['keyring-label']);
+          config.https.cert = keyringData.certificate;
+          config.https.key = keyringData.key;
+        } catch (err) {
+          process.stderr.write(`[${serviceFor}] exception thrown when reading SAF keyring\n`);
+          process.stderr.write(`${err}\n\n`);
+          process.exit(1);
+        }
+      } else {
+        process.stderr.write(`[${serviceFor}] cannot load SAF keyring due to missing keyring_js library\n`);
+        process.exit(1);
+      }
+    }else{
+      process.stderr.write(`[${serviceFor}] keyring configuration is missing\n`);
+      process.exit(1);
+    }
+
+    if(config.https.key === '' && config.https.cert === ''){
+      process.stderr.write(`[${serviceFor}] failed to process keyring\n`);
+      process.exit(1);
+    }
   }
   return config;
 }
@@ -133,6 +175,7 @@ module.exports = (params) => {
   config=loadPackageMeta(config);
   config=parseCsp(config);
   config=loadHttpsCerts(config);
+  config=loadKeyringCerts(params, config);
   config=loadPaths(config);
   return config;
 };
