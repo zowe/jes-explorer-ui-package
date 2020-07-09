@@ -3,7 +3,7 @@ const { constants: cryptoConstants } = require('crypto');
 const { HTTPS_TYPE } = require('./utils');
 
 
-function getHttpsConfig(config) {
+function extractHttpsConfigFromConfig(config) {
   let httpsConfig = {};
   if(config.https.type === HTTPS_TYPE.KEY_CERT || config.https.type === HTTPS_TYPE.KEYRING) {
     httpsConfig = {
@@ -41,7 +41,7 @@ function createHttpsServer (config, requestHandler) {
     'ECDHE-ECDSA-AES128-SHA256',
     'ECDHE-ECDSA-AES256-SHA384'].join(':');
 
-  const httpsConfig = getHttpsConfig(config);
+  const httpsConfig = extractHttpsConfigFromConfig(config);
   const httpsServer = https.createServer(httpsConfig, requestHandler);
   return httpsServer;
 }

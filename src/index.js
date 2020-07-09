@@ -12,7 +12,7 @@
 
 // load command line params
 const stdio = require('stdio');
-const {httpTypeToString} = require('./utils');
+const { httpTypeToString } = require('./utils');
 
 const params = stdio.getopt({
   'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
