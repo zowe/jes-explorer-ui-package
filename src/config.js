@@ -90,7 +90,6 @@ function parseCsp(config) {
 }
 
 function loadHttpsCerts(config) {
-  const serviceFor = config.serviceFor;
   // load https type
   if (config && config.https) {
     if(config.https.type === HTTPS_TYPE.KEY_CERT) {
