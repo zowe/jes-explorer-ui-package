@@ -94,13 +94,10 @@ function loadHttpsCerts(config) {
   // load https type
   if (config && config.https) {
     if(config.https.type === HTTPS_TYPE.KEY_CERT) {
-      process.stdout.write(`[${serviceFor}] https using key cert\n`);
       config = loadKeyCerts(config);
     } else if(config.https.type === HTTPS_TYPE.PFX_PASS) {
-      process.stdout.write(`[${serviceFor}] https using pfx pass\n`);
       config = loadPfx(config);
     } else if(config.https.type === HTTPS_TYPE.KEYRING) {
-      process.stdout.write(`[${serviceFor}] https using keyring\n`);
       config = loadKeyringCerts(config);
     }
   }

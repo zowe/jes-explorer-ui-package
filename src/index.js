@@ -12,6 +12,8 @@
 
 // load command line params
 const stdio = require('stdio');
+const {httpTypeToString} = require('./utils');
+
 const params = stdio.getopt({
   'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
   'path': {key: 'b', args:1,    description: 'base path uri', default:''},
@@ -27,19 +29,21 @@ const params = stdio.getopt({
   'keyring-label': {key: 'l', args:1, description: 'keyring certificate label', default:''},
   'verbose': {key: 'v', default:false}
 });
+const serviceFor = params.service;
 
 // load config
 let config;
-const serviceFor = params.service;
 try {
   config = require('./config')(params);
-  process.stdout.write(`[${serviceFor}]: rootDir ${config.rootDir}\n`);
-  process.stdout.write(`[${serviceFor}]: version ${config.version}\n`);
-  process.stdout.write(`[${serviceFor}]: script name ${config.scriptName}\n`);
-  process.stdout.write(`[${serviceFor}]: paths ${JSON.stringify(config.paths)}\n`);
-} catch (err) {
-  process.stderr.write(`[${serviceFor}]:failed to process config\n`);
-  process.stderr.write(`[${serviceFor}]:${err}\n\n`);
+  process.stdout.write(`[${serviceFor}] rootDir ${config.rootDir}\n`);
+  process.stdout.write(`[${serviceFor}] version ${config.version}\n`);
+  process.stdout.write(`[${serviceFor}] script name ${config.scriptName}\n`);
+  process.stdout.write(`[${serviceFor}] paths ${JSON.stringify(config.paths)}\n`);
+  process.stdout.write(`[${serviceFor}] port ${JSON.stringify(config.port)}\n`);
+  process.stdout.write(`[${serviceFor}] https using ${httpTypeToString(config.https.type)}\n`);
+} catch (err)  {
+  process.stderr.write(`[${serviceFor}] failed to process config\n`);
+  process.stderr.write(`[${serviceFor}] ${err}\n\n`);
   process.exit(1);
 }
 

@@ -7,7 +7,14 @@ Provide simple HTTPS server to server Zowe Desktop Explorer plugins.
 ## Start Dev Server
 
 ```
-npm start
+// with key cert
+npm start -- -s "jes" -b "/" -d "public" -p "9090" -k "configs/server.key" -c "configs/server.cert"
+
+// with pfx pass
+npm start -- -s "jes" -b "/" -d "public" -p "9090" -x "configs/server.pfx" -w "pass"
+
+// with keyring
+npm start -- -s "jes" -b "/" -d "public" -p "9090" -n "keyring" -o "keyring-owner" -l "keyring-label"
 ```
 
 Then visit `https://localhost:9090` to access the test server. The default config file is `configs/config-default.json`.
