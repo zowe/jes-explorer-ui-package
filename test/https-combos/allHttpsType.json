@@ -9,6 +9,9 @@
     "key": "configs/server.key",
     "cert": "configs/server.cert",
     "pfx": "configs/server.pfx",
-    "passphrase": "pass"
+    "passphrase": "pass",
+    "keyring": "keyring",
+    "keyring-owner": "owner",
+    "keyring-label": "label"
   }
 }

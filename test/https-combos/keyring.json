@@ -6,8 +6,8 @@
   }],
   "port": 9090,
   "https": {
-    "cert": "configs/server.cert",
-    "pass": "pass",
-    "keyring": "keyring"
+    "keyring": "keyring",
+    "keyring-owner": "configs/server.key",
+    "keyring-label": "configs/server.cert"
   }
 }

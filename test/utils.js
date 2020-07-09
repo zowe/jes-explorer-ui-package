@@ -123,6 +123,22 @@ const buildParams = (configPath) => {
       params.push('-w');
       params.push(config['https']['passphrase']);
     }
+
+    if(httpsConfig['keyring']) {
+      params.push('-n');
+      params.push(config['https']['keyring']);
+    }
+
+    if(httpsConfig['keyring-owner']) {
+      params.push('-o');
+      params.push(config['https']['keyring-owner']);
+    }
+
+    if(httpsConfig['keyring-label']) {
+      params.push('-l');
+      params.push(config['https']['keyring-label']);
+    }
+
   }
   return params;
 };

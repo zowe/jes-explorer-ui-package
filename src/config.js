@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const rootDir = path.resolve(__dirname, '..');
 const pkg = require('../package.json');
+const { HTTPS_TYPE } = require('./utils');
 
 const os = require('os');
 let keyring_js;
@@ -23,38 +24,36 @@ try {
   process.stdout.write('Could not load zcrypto library, SAF keyrings will be unavailable\n');
 }
 
-function validateParams (param) {
+
+function validateParams (params) {
 
   let isValid = true;
 
-  const serviceFor=param.service;
+  const serviceFor=params.service;
 
-  if((param.path==='' || !param.path) && isValid) {
+  if((params.path==='' || !params.path) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] paths configuration is missing\n`);
   }
 
-  if((param.port==='' || !param.port) && isValid) {
+  if((params.port==='' || !params.port) && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
   }
 
-  if( (param.key==='' && param.cert==='' && param.pfx==='' && param.pass==='' && param['keyring-owner']==='' && param['keyring'] ==='' && param['keyring-label']==='') && isValid) {
+  if( (params.key==='' && params.cert==='' && params.pfx==='' && params.pass==='' && params['keyring'] ==='' && params['keyring-owner']==='' && params['keyring-label']==='') && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
 
-  if( ( (param.key==='' && param.cert>'') || (param.key>'' && param.cert==='')
-      || (param.pfx==='' && param.pass>'' && param.key==='' && param.cert==='')
-      || (param.pfx==='' && param.pass>'' && !(param.key>'' && param.cert>''))
-      || (param.pfx>'' && param.pass==='') ) && isValid) {
+  if( whichHttpsType(params)===0 && isValid) {
     isValid = false;
     process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
   }
 
   if(!isValid) {
     process.stderr.write(`[${serviceFor}] is failed to start, error:\n`);
-    param.printHelp();
+    params.printHelp();
     process.exit(1);
     return false;
   }
@@ -62,11 +61,27 @@ function validateParams (param) {
   return true;
 }
 
+function whichHttpsType(params) {
+  if(params.key>'' && params.cert>'') {
+    return HTTPS_TYPE.KEY_CERT;
+  }
+
+  if(params.pfx>'' && params.pass>'') {
+    return HTTPS_TYPE.PFX_PASS;
+  }
+
+  if(params.keyring>'' && params['keyring-owner']>'' && params['keyring-label']>'') {
+    return HTTPS_TYPE.KEYRING;
+  }
+
+  return 0;
+}
+
 function parseCsp(config) {
   if(config && config.csp && config.csp['frame-ancestors']) {
     const frames=config.csp['frame-ancestors'];
     if(frames.length>0 && frames[0]>'') {
-      config.csp['frame-ancestors'] = config.csp['frame-ancestors'][0].split(',');
+      config.csp['frame-ancestors'] = frames[0].split(',');
     } else {
       config.csp['frame-ancestors'] = [];
     }
@@ -75,46 +90,70 @@ function parseCsp(config) {
 }
 
 function loadHttpsCerts(config) {
-  // load https certs file content
+  const serviceFor = config.serviceFor;
+  // load https type
   if (config && config.https) {
-    ['key', 'cert', 'pfx'].forEach(key => {
-      if (config.https[key]) {
-        let file = config.https[key];
-        config.https[key] = fs.readFileSync(file);
-      }
-    });
+    if(config.https.type === HTTPS_TYPE.KEY_CERT) {
+      process.stdout.write(`[${serviceFor}] https using key cert\n`);
+      config = loadKeyCerts(config);
+    } else if(config.https.type === HTTPS_TYPE.PFX_PASS) {
+      process.stdout.write(`[${serviceFor}] https using pfx pass\n`);
+      config = loadPfx(config);
+    } else if(config.https.type === HTTPS_TYPE.KEYRING) {
+      process.stdout.write(`[${serviceFor}] https using keyring\n`);
+      config = loadKeyringCerts(config);
+    }
   }
   return config;
 }
 
-function loadKeyringCerts(param, config) {
-  const serviceFor=param.service;
-  if (config.https.key === '' && config.https.cert === '') {
-    process.stdout.write(`[${serviceFor}] key and certificate not found, attempting to load from keyring\n`);
-    if ((param['keyring-owner'] > '' || param['keyring-owner'] ) && (param['keyring'] > '' || param['keyring'] ) && ( param['keyring-label'] > '' || param['keyring-label'])){
-      if (keyring_js) {
-        try {
-          const keyringData = keyring_js.getPemEncodedData(param['keyring-owner'], param['keyring'], param['keyring-label']);
-          config.https.cert = keyringData.certificate;
-          config.https.key = keyringData.key;
-        } catch (err) {
-          process.stderr.write(`[${serviceFor}] exception thrown when reading SAF keyring\n`);
-          process.stderr.write(`${err}\n\n`);
-          process.exit(1);
-        }
-      } else {
-        process.stderr.write(`[${serviceFor}] cannot load SAF keyring due to missing keyring_js library\n`);
-        process.exit(1);
-      }
-    }else{
-      process.stderr.write(`[${serviceFor}] keyring configuration is missing\n`);
-      process.exit(1);
-    }
+function loadKeyCerts(config) {
+  const serviceFor = config.serviceFor;
+  try {
+    ['key', 'cert'].forEach(key => {
+      let path = config.https[key];
+      config.https[key] = fs.readFileSync(path);
+    });
+  } catch(err) {
+    process.stderr.write(`[${serviceFor}] exception thrown when reading key cert files no such file or directory\n`);
+    process.exit(1);
+  }
+  return config;
+}
 
-    if(config.https.key === '' && config.https.cert === ''){
-      process.stderr.write(`[${serviceFor}] failed to process keyring\n`);
+function loadPfx(config) {
+  const serviceFor = config.serviceFor;
+  try {
+    let path = config.https['pfx'];
+    config.https['pfx'] = fs.readFileSync(path);
+  } catch(err) {
+    process.stderr.write(`[${serviceFor}] exception thrown when reading pfx no such file or directory\n`);
+    process.exit(1);
+  }
+  return config;
+}
+
+function loadKeyringCerts(config) {
+  const serviceFor = config.serviceFor;
+
+  if (keyring_js) {
+    try {
+      const keyringData = keyring_js.getPemEncodedData(config['keyring-owner'], config['keyring'], config['keyring-label']);
+      config.https.cert = keyringData.certificate;
+      config.https.key = keyringData.key;
+    } catch (err) {
+      process.stderr.write(`[${serviceFor}] exception thrown when reading SAF keyring\n`);
+      process.stderr.write(`${err}\n\n`);
       process.exit(1);
     }
+  } else {
+    process.stderr.write(`[${serviceFor}] cannot load SAF keyring due to missing keyring_js library\n`);
+    process.exit(1);
+  }
+
+  if(config.https.key === '' && config.https.cert === ''){
+    process.stderr.write(`[${serviceFor}] failed to process keyring\n`);
+    process.exit(1);
   }
   return config;
 }
@@ -141,10 +180,12 @@ function loadPackageMeta(config) {
 function loadParams(params) {
 
   if(params.verbose) {
-    process.stdout.write(`[args]:${JSON.stringify(params)}\n`);
+    process.stdout.write(`[${params.service}]: args ${JSON.stringify(params)}\n`);
   }
 
   validateParams(params);
+
+  const httpType = whichHttpsType(params);
 
   const paramConfig = {
     'service-for': params.service,
@@ -154,10 +195,14 @@ function loadParams(params) {
     }],
     'port': params.port,
     'https': {
+      'type': httpType,
       'key': params.key,
       'cert': params.cert,
       'pfx': params.pfx,
       'passphrase': params.pass,
+      'keyring': params.keyring,
+      'keyring-owner': params['keyring-owner'],
+      'keyring-label': params['keyring-label']
     },
     'csp': {
       'frame-ancestors': [params.csp]
@@ -175,7 +220,6 @@ module.exports = (params) => {
   config=loadPackageMeta(config);
   config=parseCsp(config);
   config=loadHttpsCerts(config);
-  config=loadKeyringCerts(params, config);
   config=loadPaths(config);
   return config;
 };

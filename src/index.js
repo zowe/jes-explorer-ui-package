@@ -30,16 +30,16 @@ const params = stdio.getopt({
 
 // load config
 let config;
+const serviceFor = params.service;
 try {
   config = require('./config')(params);
-  process.stdout.write(`[rootDir]:${config.rootDir}\n`);
-  process.stdout.write(`[version]:${config.version}\n`);
-  process.stdout.write(`[script name]:${config.scriptName}\n`);
-  process.stdout.write(`[serviceFor]:${config.serviceFor}\n`);
-  process.stdout.write(`[paths]:${JSON.stringify(config.paths)}\n`);
+  process.stdout.write(`[${serviceFor}]: rootDir ${config.rootDir}\n`);
+  process.stdout.write(`[${serviceFor}]: version ${config.version}\n`);
+  process.stdout.write(`[${serviceFor}]: script name ${config.scriptName}\n`);
+  process.stdout.write(`[${serviceFor}]: paths ${JSON.stringify(config.paths)}\n`);
 } catch (err) {
-  process.stderr.write('failed to process config\n');
-  process.stderr.write(`${err}\n\n`);
+  process.stderr.write(`[${serviceFor}]:failed to process config\n`);
+  process.stderr.write(`[${serviceFor}]:${err}\n\n`);
   process.exit(1);
 }
 
