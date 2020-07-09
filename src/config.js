@@ -111,8 +111,8 @@ function loadKeyCerts(config) {
   const serviceFor = config.serviceFor;
   try {
     ['key', 'cert'].forEach(key => {
-      let path = config.https[key];
-      config.https[key] = fs.readFileSync(path);
+      let filePath = config.https[key];
+      config.https[key] = fs.readFileSync(filePath);
     });
   } catch(err) {
     process.stderr.write(`[${serviceFor}] exception thrown when reading key cert files no such file or directory\n`);
@@ -124,8 +124,8 @@ function loadKeyCerts(config) {
 function loadPfx(config) {
   const serviceFor = config.serviceFor;
   try {
-    let path = config.https['pfx'];
-    config.https['pfx'] = fs.readFileSync(path);
+    let filePath = config.https['pfx'];
+    config.https['pfx'] = fs.readFileSync(filePath);
   } catch(err) {
     process.stderr.write(`[${serviceFor}] exception thrown when reading pfx no such file or directory\n`);
     process.exit(1);
