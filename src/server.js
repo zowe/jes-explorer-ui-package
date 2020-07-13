@@ -1,5 +1,23 @@
 const https = require('https');
 const { constants: cryptoConstants } = require('crypto');
+const { HTTPS_TYPE } = require('./utils');
+
+
+function extractHttpsConfigFromConfig(config) {
+  let httpsConfig = {};
+  if(config.https.type === HTTPS_TYPE.KEY_CERT || config.https.type === HTTPS_TYPE.KEYRING) {
+    httpsConfig = {
+      key: config.https.key,
+      cert: config.https.cert
+    };
+  } else if(config.https.type === HTTPS_TYPE.PFX_PASS) {
+    httpsConfig = {
+      pfx: config.https.pfx,
+      passphrase: config.https.passphrase
+    };
+  }
+  return httpsConfig;
+}
 
 function createHttpsServer (config, requestHandler) {
   if (!config.https ||
@@ -23,10 +41,10 @@ function createHttpsServer (config, requestHandler) {
     'ECDHE-ECDSA-AES128-SHA256',
     'ECDHE-ECDSA-AES256-SHA384'].join(':');
 
-  const httpsServer = https.createServer(config.https, requestHandler);
+  const httpsConfig = extractHttpsConfigFromConfig(config);
+  const httpsServer = https.createServer(httpsConfig, requestHandler);
   return httpsServer;
 }
-
 
 module.exports = (config, requestHandler) => {
   const httpsServer = createHttpsServer(config, requestHandler);
