@@ -56,19 +56,19 @@ describe('test https combos', function() {
     await initTest('key.json');
     await testSuccessResponse();
   });
-
-  it('using key-cert-pass should return index.html when requesting /', async function() {
-    await initTest('keyWithPass.json');
-    await testSuccessResponse();
-  });
   
   it('using pfx-pass should return index.html when requesting /', async function() {
     await initTest('pfx.json');
     await testSuccessResponse();
   });
 
-  it('using both-key-cert-pfx-pass should return index.html when requesting /', async function() {
-    await initTest('bothKeyPass.json');
+  it('using all-key-cert-pfx-keyring should return index.html when requesting /', async function() {
+    await initTest('allHttpsType.json');
+    await testSuccessResponse();
+  });
+
+  it.skip('using keyring should return index.html when requesting /', async function() {
+    await initTest('keyring.json');
     await testSuccessResponse();
   });
 
@@ -88,7 +88,19 @@ describe('test https combos', function() {
     await testFailedResponse('fail_onlycert.json');
   });
 
-  it('using only cert should fail on start', async function() {
+  it('using only keyring should fail on start', async function() {
+    await testFailedResponse('fail_onlykeyring.json');
+  });
+
+  it('using only keyring-owner should fail on start', async function() {
+    await testFailedResponse('fail_onlykeyringowner.json');
+  });
+
+  it('using only keyring-label should fail on start', async function() {
+    await testFailedResponse('fail_onlykeyringlabel.json');
+  });
+
+  it('using random combo should fail on start', async function() {
     await testFailedResponse('fail_randomcombo.json');
   });
 });

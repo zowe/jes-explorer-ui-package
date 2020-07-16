@@ -12,6 +12,8 @@
 
 // load command line params
 const stdio = require('stdio');
+const { httpTypeToString } = require('./utils');
+
 const params = stdio.getopt({
   'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
   'path': {key: 'b', args:1,    description: 'base path uri', default:''},
@@ -22,21 +24,26 @@ const params = stdio.getopt({
   'pfx': {key: 'x', args:1, description: 'server pfx', default:''},
   'pass': {key: 'w', args:1, description: 'server pfx passphrase', default:''},
   'csp': {key: 'f', args:1, description: 'csp whitelist ancestors frames', default:''},
+  'keyring': {key: 'n', args:1, description: 'keyring name', default:''},
+  'keyring-owner': {key: 'o', args:1, description: 'keyring owner id', default:''},
+  'keyring-label': {key: 'l', args:1, description: 'keyring certificate label', default:''},
   'verbose': {key: 'v', default:false}
 });
+const serviceFor = params.service;
 
 // load config
 let config;
 try {
   config = require('./config')(params);
-  process.stdout.write(`[rootDir]:${config.rootDir}\n`);
-  process.stdout.write(`[version]:${config.version}\n`);
-  process.stdout.write(`[script name]:${config.scriptName}\n`);
-  process.stdout.write(`[serviceFor]:${config.serviceFor}\n`);
-  process.stdout.write(`[paths]:${JSON.stringify(config.paths)}\n`);
-} catch (err) {
-  process.stderr.write('failed to process config\n');
-  process.stderr.write(`${err}\n\n`);
+  process.stdout.write(`[${serviceFor}] rootDir ${config.rootDir}\n`);
+  process.stdout.write(`[${serviceFor}] version ${config.version}\n`);
+  process.stdout.write(`[${serviceFor}] script name ${config.scriptName}\n`);
+  process.stdout.write(`[${serviceFor}] paths ${JSON.stringify(config.paths)}\n`);
+  process.stdout.write(`[${serviceFor}] port ${JSON.stringify(config.port)}\n`);
+  process.stdout.write(`[${serviceFor}] https using ${httpTypeToString(config.https.type)}\n`);
+} catch (err)  {
+  process.stderr.write(`[${serviceFor}] failed to process config\n`);
+  process.stderr.write(`[${serviceFor}] ${err}\n\n`);
   process.exit(1);
 }
 
