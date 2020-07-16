@@ -62,11 +62,11 @@ function validateParams (params) {
 }
 
 function whichHttpsType(params) {
-  if(params.key>'' && params.cert>'') {
+  if(params.key>'' && params.cert>'' && typeof params.key === 'string' && typeof params.cert === 'string') {
     return HTTPS_TYPE.KEY_CERT;
   }
 
-  if(params.pfx>'' && params.pass>'') {
+  if(params.pfx>'' && params.pass>'' && typeof params.pfx === 'string' && typeof params.pass === 'string') {
     return HTTPS_TYPE.PFX_PASS;
   }
 
