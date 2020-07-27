@@ -71,3 +71,4 @@ typings/
 
 #VScode plugins
 .history
+dist
