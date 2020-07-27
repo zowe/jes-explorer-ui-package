@@ -17,6 +17,9 @@ FUNC=[CreatePax][pre-packaging]
 PWD=$(pwd)
 
 find . -print
+cd ./content/server
+npm install
+cd ${PWD}
 
 # cd ./content/server
 # npm install
