@@ -8,9 +8,9 @@
   "bin": {
     "explorer-ui-server": "src/index.js"
   },
-  // "publishConfig": {
-  //   "registry": "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
-  // },
+  "publishConfig": {
+    "registry": "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
+  },
   "scripts": {
     "start": "node src/index.js",
     "lint": "eslint .",
