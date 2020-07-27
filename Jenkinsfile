@@ -63,7 +63,14 @@ node('ibm-jenkins-slave-nvm') {
   )
 
   // define we need publish stage
-  pipeline.publish()
+  pipeline.publish(
+    operation: {
+      echo "Default npm publish will be skipped."
+    },
+    artifacts: [
+      '.pax/explorer-ui-server.pax'
+    ]
+  )
 
   // define we need release stage
   pipeline.release()
