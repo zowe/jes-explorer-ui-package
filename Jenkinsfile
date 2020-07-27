@@ -50,7 +50,11 @@ node('ibm-jenkins-slave-nvm') {
   )
 
   // build stage is required
-  pipeline.build()
+  pipeline.build(
+    operation: {
+      echo "build holder"
+    }
+  )
 
   pipeline.test(
     name          : 'Unit',
