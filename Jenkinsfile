@@ -19,7 +19,7 @@ node('ibm-jenkins-slave-nvm') {
 
   pipeline.setup(
     packageName: 'org.zowe.explorer-ui-server',
-    nodeJsVersion: 'v10.18.1',
+    // nodeJsVersion: 'v10.18.1',
     github: [
       email                      : lib.Constants.DEFAULT_GITHUB_ROBOT_EMAIL,
       usernamePasswordCredential : lib.Constants.DEFAULT_GITHUB_ROBOT_CREDENTIAL,
@@ -46,7 +46,7 @@ node('ibm-jenkins-slave-nvm') {
       usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_CREDENTIAL,
     ],
     // FIXME: ideally this should set to false (using default by remove this line)
-    ignoreAuditFailure            : true,
+    ignoreAuditFailure            : true
   )
 
   // build stage is required
