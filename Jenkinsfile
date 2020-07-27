@@ -19,6 +19,7 @@ node('ibm-jenkins-slave-nvm') {
 
   pipeline.setup(
     packageName: 'org.zowe.explorer-ui-server',
+    nodeJsVersion: 'v10.18.1',
     github: [
       email                      : lib.Constants.DEFAULT_GITHUB_ROBOT_EMAIL,
       usernamePasswordCredential : lib.Constants.DEFAULT_GITHUB_ROBOT_CREDENTIAL,
@@ -26,6 +27,19 @@ node('ibm-jenkins-slave-nvm') {
     artifactory: [
       url                        : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_URL,
       usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_ROBOT_CREDENTIAL,
+    ],
+    pax: [
+      sshHost                    : lib.Constants.DEFAULT_PAX_PACKAGING_SSH_HOST,
+      sshPort                    : lib.Constants.DEFAULT_PAX_PACKAGING_SSH_PORT,
+      sshCredential              : lib.Constants.DEFAULT_PAX_PACKAGING_SSH_CREDENTIAL,
+      remoteWorkspace            : lib.Constants.DEFAULT_PAX_PACKAGING_REMOTE_WORKSPACE,
+    ],
+    installRegistries: [
+      [
+        email                      : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_EMAIL,
+        usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_CREDENTIAL,
+        registry                   : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_INSTALL,
+      ]
     ],
     publishRegistry: [
       email                      : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_EMAIL,
@@ -61,6 +75,9 @@ node('ibm-jenkins-slave-nvm') {
     allowBranchScan : lib.Constants.DEFAULT_LFJ_SONARCLOUD_ALLOW_BRANCH,
     failBuild       : false
   )
+
+  // we have pax packaging step
+  pipeline.packaging(name: 'explorer-ui-server')
 
   // define we need publish stage
   pipeline.publish(
