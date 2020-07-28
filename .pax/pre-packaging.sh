@@ -16,7 +16,7 @@ PWD=$(pwd)
 
 # npm install on z/OS to get the keyring_js node modules
 cd ./content/server
-npm install
+npm install --production
 cd ${PWD}
 
 # display extracted files

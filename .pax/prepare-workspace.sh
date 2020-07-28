@@ -20,9 +20,6 @@
 SCRIPT_NAME=$(basename "$0")
 BASEDIR=$(dirname "$0")
 PAX_WORKSPACE_DIR=.pax
-PACKAGE_NAME=$(node -e "console.log(require('./package.json').name)")
-PACKAGE_VERSION=$(node -e "console.log(require('./package.json').version)")
-PACKAGE_DESC=$(node -e "console.log(require('./package.json').description)")
 
 cd $BASEDIR
 cd ..
@@ -32,20 +29,11 @@ ROOT_DIR=$(pwd)
 echo "[${SCRIPT_NAME}] cleaning PAX workspace ..."
 rm -fr "${PAX_WORKSPACE_DIR}/content"
 mkdir -p "${PAX_WORKSPACE_DIR}/content"
-
 # build client
-echo "[${SCRIPT_NAME}] building client ..."
-cd "dist"
-npm install
-
 cd "${ROOT_DIR}"
-
 # copy explorer-ui-server to target folder
 echo "[${SCRIPT_NAME}] copying explorer UI backend ..."
 mkdir -p "${PAX_WORKSPACE_DIR}/content/server"
-cp README.md "${PAX_WORKSPACE_DIR}/content/server"
-cp package.json "${PAX_WORKSPACE_DIR}/content/server"
-cp package-lock.json "${PAX_WORKSPACE_DIR}/content/server"
 cp -r dist/. "${PAX_WORKSPACE_DIR}/content/server"
 
 # move content to another folder

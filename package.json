@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "build": "npm run clean && cp -r configs dist/configs && cp -r src dist/src && cp -r public dist/public && cp *.json dist && rimraf dist/package-lock.json",
+    "build": "npm run clean && cp -r configs dist/configs && cp -r src dist/src && cp -r public dist/public && cp *.json dist && cp README.md dist",
     "clean": "rimraf dist && mkdirp dist",
     "lint": "eslint .",
     "test": "nyc mocha"
