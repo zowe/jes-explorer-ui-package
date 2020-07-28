@@ -33,9 +33,6 @@ echo "[${SCRIPT_NAME}] cleaning PAX workspace ..."
 rm -fr "${PAX_WORKSPACE_DIR}/content"
 mkdir -p "${PAX_WORKSPACE_DIR}/content"
 
-echo "Contents"
-find . -print
-
 # build client
 echo "[${SCRIPT_NAME}] building client ..."
 cd "dist"
