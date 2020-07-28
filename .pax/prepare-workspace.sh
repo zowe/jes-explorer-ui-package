@@ -45,11 +45,11 @@ cd "${ROOT_DIR}"
 
 # copy explorer-ui-server to target folder
 echo "[${SCRIPT_NAME}] copying explorer UI backend ..."
-mkdir -p "${PAX_WORKSPACE_DIR}/content"
-cp README.md "${PAX_WORKSPACE_DIR}/content"
-cp package.json "${PAX_WORKSPACE_DIR}/content"
-cp package-lock.json "${PAX_WORKSPACE_DIR}/content"
-cp -r dist/. "${PAX_WORKSPACE_DIR}/content"
+mkdir -p "${PAX_WORKSPACE_DIR}/content/server"
+cp README.md "${PAX_WORKSPACE_DIR}/content/server"
+cp package.json "${PAX_WORKSPACE_DIR}/content/server"
+cp package-lock.json "${PAX_WORKSPACE_DIR}/content/server"
+cp -r dist/. "${PAX_WORKSPACE_DIR}/content/server"
 
 # move content to another folder
 rm -fr "${PAX_WORKSPACE_DIR}/ascii"
