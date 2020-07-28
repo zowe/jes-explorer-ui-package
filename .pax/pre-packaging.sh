@@ -14,7 +14,7 @@ set -x
 FUNC=[CreatePax][pre-packaging]
 PWD=$(pwd)
 
-find . -print
+# npm install on z/OS to get the keyring_js node modules
 cd ./content
 npm install
 cd ${PWD}

@@ -14,7 +14,6 @@
 # Build script
 # 
 # - build client
-# - import ui server dependency
 ################################################################################
 
 # contants
