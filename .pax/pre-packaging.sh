@@ -11,19 +11,13 @@ set -x
 # Copyright IBM Corporation 2018, 2020
 ################################################################################
 
-# TODO - remove if no changes
-
 FUNC=[CreatePax][pre-packaging]
 PWD=$(pwd)
 
 find . -print
-cd ./content/server
+cd ./content
 npm install
 cd ${PWD}
-
-# cd ./content/server
-# npm install
-# cd ${PWD}
 
 # display extracted files
 echo "$FUNC content of $PWD...."

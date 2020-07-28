@@ -19,21 +19,6 @@ node('ibm-jenkins-slave-nvm') {
 
   pipeline.setup(
     packageName: 'org.zowe.explorer-ui-server',
-    // nodeJsVersion: 'v10.18.1',
-    github: [
-      email                      : lib.Constants.DEFAULT_GITHUB_ROBOT_EMAIL,
-      usernamePasswordCredential : lib.Constants.DEFAULT_GITHUB_ROBOT_CREDENTIAL,
-    ],
-    artifactory: [
-      url                        : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_URL,
-      usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_ROBOT_CREDENTIAL,
-    ],
-    pax: [
-      sshHost                    : lib.Constants.DEFAULT_PAX_PACKAGING_SSH_HOST,
-      sshPort                    : lib.Constants.DEFAULT_PAX_PACKAGING_SSH_PORT,
-      sshCredential              : lib.Constants.DEFAULT_PAX_PACKAGING_SSH_CREDENTIAL,
-      remoteWorkspace            : lib.Constants.DEFAULT_PAX_PACKAGING_REMOTE_WORKSPACE,
-    ],
     installRegistries: [
       [
         email                      : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_EMAIL,
@@ -44,9 +29,7 @@ node('ibm-jenkins-slave-nvm') {
     publishRegistry: [
       email                      : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_EMAIL,
       usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_CREDENTIAL,
-    ],
-    // FIXME: ideally this should set to false (using default by remove this line)
-    ignoreAuditFailure            : true
+    ]
   )
 
   // build stage is required
