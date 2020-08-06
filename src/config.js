@@ -134,7 +134,7 @@ function loadKeyringCerts(config) {
 
   if (keyring_js) {
     try {
-      const keyringData = keyring_js.getPemEncodedData(config['keyring-owner'], config['keyring'], config['keyring-label']);
+      const keyringData = keyring_js.getPemEncodedData(config.https['keyring-owner'], config.https['keyring'], config.https['keyring-label']);
       config.https.cert = keyringData.certificate;
       config.https.key = keyringData.key;
     } catch (err) {
