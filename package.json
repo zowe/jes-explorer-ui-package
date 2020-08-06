@@ -1,6 +1,6 @@
 {
   "name": "explorer-ui-server",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "HTTP Server to host static files",
   "author": "IBM",
   "license": "EPL-2.0",
