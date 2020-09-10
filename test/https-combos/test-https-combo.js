@@ -12,7 +12,7 @@ const expect = require('chai').expect;
 const debug = require('debug')('test:explorer-ui-server:multiple');
 
 const U = require('../utils');
-const TEST_SERVER_PORT = 9090;
+const TEST_SERVER_PORT = process.env.UI_SERVER_PORT || 9090;
 
 let serverPid;
 
@@ -67,7 +67,7 @@ describe('test https combos', function() {
     await testSuccessResponse();
   });
 
-  it.skip('using keyring should return index.html when requesting /', async function() {
+  it('using keyring should return index.html when requesting /', async function() {
     await initTest('keyring.json');
     await testSuccessResponse();
   });

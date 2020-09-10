@@ -225,8 +225,9 @@ const stopTestServer = async pid => {
 };
 
 const request = async (testcase, url, port = 9090, maxRedirects = 0) => {
+  const baseURL = process.env.UI_SERVER_BASE_URL || `https://localhost:${port}`;
   const REQ = axios.create({
-    baseURL: `https://localhost:${port}`,
+    baseURL,
     timeout: 5000,
   });
 
@@ -254,8 +255,9 @@ const request = async (testcase, url, port = 9090, maxRedirects = 0) => {
 
 
 const request2 = async (testcase, url, port = 9090, maxRedirects = 0) => {
+  const baseURL = process.env.UI_SERVER_BASE_URL || `https://localhost:${port}`;
   const REQ = {
-    baseURL: `https://localhost:${port}`,
+    baseURL,
     timeout: 5000,
   };
 
