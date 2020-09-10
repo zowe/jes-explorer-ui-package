@@ -145,7 +145,6 @@ const buildParams = (configPath) => {
 
 
 const startTestServer = (config, verbose = false) => {
-  console.log('startTestServer:', config);
   let params = ['src/index.js'];
   if (config) {
     params=params.concat(buildParams(config));
@@ -227,7 +226,6 @@ const stopTestServer = async pid => {
 
 const request = async (testcase, url, port = 9090, maxRedirects = 0) => {
   const baseURL = process.env.UI_SERVER_BASE_URL || `https://localhost:${port}`;
-  console.log('baseUrl:',baseURL);
 
   const REQ = axios.create({
     baseURL,
@@ -259,7 +257,6 @@ const request = async (testcase, url, port = 9090, maxRedirects = 0) => {
 
 const request2 = async (testcase, url, port = 9090, maxRedirects = 0) => {
   const baseURL = process.env.UI_SERVER_BASE_URL || `https://localhost:${port}`;
-  console.log('baseUrl:',baseURL);
   const REQ = {
     baseURL,
     timeout: 5000,
