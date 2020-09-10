@@ -33,8 +33,8 @@ mkdir -p "${PAX_WORKSPACE_DIR}/content"
 cd "${ROOT_DIR}"
 # copy explorer-ui-server to target folder
 echo "[${SCRIPT_NAME}] copying explorer UI backend ..."
-mkdir -p "${PAX_WORKSPACE_DIR}/content/server"
-cp -r dist/. "${PAX_WORKSPACE_DIR}/content/server"
+mkdir -p "${PAX_WORKSPACE_DIR}/content/"
+cp -r dist/. "${PAX_WORKSPACE_DIR}/content/"
 
 # move content to another folder
 rm -fr "${PAX_WORKSPACE_DIR}/ascii"
