@@ -67,7 +67,7 @@ describe('test https combos', function() {
     await testSuccessResponse();
   });
 
-  it('using keyring should return index.html when requesting /', async function() {
+  it.skip('using keyring should return index.html when requesting /', async function() {
     await initTest('keyring.json');
     await testSuccessResponse();
   });
