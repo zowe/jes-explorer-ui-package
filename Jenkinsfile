@@ -56,13 +56,13 @@ node('ibm-jenkins-slave-nvm') {
   )
 
   // we have pax packaging step
-  pipeline.packaging(name: 'explorer-ui-server')
+  pipeline.packaging(name: 'explorer-ui-server', paxOptions: '-o saveext')
 
   // define we need publish stage
   pipeline.publish(
-    operation: {
-      echo "Default npm publish will be skipped."
-    },
+    // operation: {
+    //   echo "Default npm publish will be skipped."
+    // },
     artifacts: [
       '.pax/explorer-ui-server.pax'
     ]
