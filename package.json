@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "build": "cp -r configs dist/configs && cp -r src dist/src && cp -r public dist/public && cp *.json dist && cp README.md dist",
+    "build": "cp -r configs dist/configs && cp -r src dist/src && cp -r public dist/public && cp *.json dist && cp README.md dist && cp LICENSE dist",
     "prebuild": "npm run clean",
     "clean": "rimraf dist && mkdirp dist",
     "lint": "eslint .",

@@ -38,3 +38,13 @@ test/
 
 # AppScan configuration
 *.ppf
+
+# .pax build folder
+.pax/
+# pax build temporary files
+pax-packaging-explorer-ui-server-*
+
+# dist is actually has same content as root, and explorer-jes is using root
+# folder for integration test, so ignore dist for npm publishing
+# FIXME: this may change in the future.
+dist/
