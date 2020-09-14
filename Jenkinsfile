@@ -19,28 +19,21 @@ node('ibm-jenkins-slave-nvm') {
 
   pipeline.setup(
     packageName: 'org.zowe.explorer-ui-server',
-    github: [
-      email                      : lib.Constants.DEFAULT_GITHUB_ROBOT_EMAIL,
-      usernamePasswordCredential : lib.Constants.DEFAULT_GITHUB_ROBOT_CREDENTIAL,
-    ],
-    artifactory: [
-      url                        : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_URL,
-      usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_ROBOT_CREDENTIAL,
+    installRegistries: [
+      [
+        email                      : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_EMAIL,
+        usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_CREDENTIAL,
+        registry                   : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_INSTALL,
+      ]
     ],
     publishRegistry: [
       email                      : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_EMAIL,
       usernamePasswordCredential : lib.Constants.DEFAULT_LFJ_NPM_PRIVATE_REGISTRY_CREDENTIAL,
-    ],
-    // FIXME: ideally this should set to false (using default by remove this line)
-    ignoreAuditFailure            : true,
+    ]
   )
 
   // build stage is required
-  pipeline.build(
-    operation: {
-      echo "build holder"
-    }
-  )
+  pipeline.build()
 
   pipeline.test(
     name          : 'Unit',
@@ -62,8 +55,15 @@ node('ibm-jenkins-slave-nvm') {
     failBuild       : false
   )
 
-  // define we need publish stage
-  pipeline.publish()
+  // we have pax packaging step - keep files tagging
+  pipeline.packaging(name: 'explorer-ui-server', paxOptions: '-o saveext')
+
+  // define we need publish stage (both npm publish and pax artifact)
+  pipeline.publish(
+    artifacts: [
+      '.pax/explorer-ui-server.pax'
+    ]
+  )
 
   // define we need release stage
   pipeline.release()

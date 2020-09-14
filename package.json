@@ -13,6 +13,9 @@
   },
   "scripts": {
     "start": "node src/index.js",
+    "build": "cp -r configs dist/configs && cp -r src dist/src && cp -r public dist/public && cp *.json dist && cp README.md dist && cp LICENSE dist",
+    "prebuild": "npm run clean",
+    "clean": "rimraf dist && mkdirp dist",
     "lint": "eslint .",
     "test": "nyc mocha"
   },
@@ -28,11 +31,13 @@
     "chai": "^4.2.0",
     "debug": "^4.1.1",
     "eslint": "^5.16.0",
+    "mkdirp": "^1.0.3",
     "mocha": "^7.2.0",
     "mocha-jenkins-reporter": "^0.4.3",
     "mocha-multi-reporters": "^1.1.7",
     "mochawesome": "^4.1.0",
-    "node-fetch": "^2.6.0",
-    "nyc": "^14.1.0"
+    "node-fetch": "^2.6.1",
+    "nyc": "^14.1.0",
+    "rimraf": "^3.0.2"
   }
 }

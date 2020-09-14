@@ -12,7 +12,7 @@ const expect = require('chai').expect;
 const debug = require('debug')('test:explorer-ui-server:root');
 
 const U = require('../utils');
-const TEST_SERVER_PORT = 9090;
+const TEST_SERVER_PORT = process.env.UI_SERVER_PORT || 9090;
 
 let serverPid;
 
