@@ -18,25 +18,22 @@
 
 # contants
 SCRIPT_NAME=$(basename "$0")
-BASEDIR=$(dirname "$0")
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+ROOT_DIR=$(cd "$SCRIPT_DIR" && cd .. && pwd)
 PAX_WORKSPACE_DIR=.pax
 
-cd $BASEDIR
-cd ..
-ROOT_DIR=$(pwd)
+cd "${ROOT_DIR}"
 
 # prepare pax workspace
 echo "[${SCRIPT_NAME}] cleaning PAX workspace ..."
 rm -fr "${PAX_WORKSPACE_DIR}/content"
 mkdir -p "${PAX_WORKSPACE_DIR}/content"
-# build client
-cd "${ROOT_DIR}"
+
 # copy explorer-ui-server to target folder
 echo "[${SCRIPT_NAME}] copying explorer UI backend ..."
-mkdir -p "${PAX_WORKSPACE_DIR}/content/"
 cp -r dist/. "${PAX_WORKSPACE_DIR}/content/"
 
-# move content to another folder
+# move ASCII files to another folder
 rm -fr "${PAX_WORKSPACE_DIR}/ascii"
 mkdir -p "${PAX_WORKSPACE_DIR}/ascii"
 rsync -rv \
