@@ -1,0 +1,22 @@
+---
+# ===== Zowe Component Manifest Definition =====
+# Component name
+# this will be the folder name under <zowe-runtime>/components folder
+# please note this value is not same as the service id we defined in apiml-static-registration.yaml.template
+name: explorer-ui-server
+# Component identifier. This identifier matches artifact path in Zowe Artifactory https://zowe.jfrog.io/.
+id: org.zowe.explorer-ui-server
+# Component version is defined in gradle.properties for Gradle project
+# Human readable component name
+title: Explorer UI Server
+# Human readable component description
+description: HTTP Server to host static files
+license: EPL-2.0
+repository:
+  type: git
+  url: https://github.com/zowe/explorer-ui-server.git
+build:
+  branch: "{{build.branch}}"
+  number: "{{build.number}}"
+  commitHash: "{{build.commitHash}}"
+  timestamp: "{{build.timestamp}}"

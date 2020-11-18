@@ -32,6 +32,7 @@ mkdir -p "${PAX_WORKSPACE_DIR}/content"
 # copy explorer-ui-server to target folder
 echo "[${SCRIPT_NAME}] copying explorer UI backend ..."
 cp -r dist/. "${PAX_WORKSPACE_DIR}/content/"
+cp manifest.yaml "${PAX_WORKSPACE_DIR}/content"
 
 # move ASCII files to another folder
 rm -fr "${PAX_WORKSPACE_DIR}/ascii"
