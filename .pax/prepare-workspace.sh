@@ -32,6 +32,20 @@ mkdir -p "${PAX_WORKSPACE_DIR}/content"
 # copy explorer-ui-server to target folder
 echo "[${SCRIPT_NAME}] copying explorer UI backend ..."
 cp -r dist/. "${PAX_WORKSPACE_DIR}/content/"
+cp manifest.yaml "${PAX_WORKSPACE_DIR}/content"
+
+# update build information
+# BRANCH_NAME and BUILD_NUMBER is Jenkins environment variable
+commit_hash=$(git rev-parse --verify HEAD)
+current_timestamp=$(date +%s%3N)
+sed -e "s|{{build\.branch}}|${BRANCH_NAME}|g" \
+    -e "s|{{build\.number}}|${BUILD_NUMBER}|g" \
+    -e "s|{{build\.commitHash}}|${commit_hash}|g" \
+    -e "s|{{build\.timestamp}}|${current_timestamp}|g" \
+    "${PAX_WORKSPACE_DIR}/content/manifest.yaml" > "${PAX_WORKSPACE_DIR}/content/manifest.yaml.tmp"
+mv "${PAX_WORKSPACE_DIR}/content/manifest.yaml.tmp" "${PAX_WORKSPACE_DIR}/content/manifest.yaml"
+echo "[${SCRIPT_NAME}] manifest:"
+cat "${PAX_WORKSPACE_DIR}/content/manifest.yaml"
 
 # move ASCII files to another folder
 rm -fr "${PAX_WORKSPACE_DIR}/ascii"
