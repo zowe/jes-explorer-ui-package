@@ -2,6 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const cache = new Map();
 
+const zluxUtil = require('../../zlux/zlux-server-framework/lib/util.js');
+const clusterLogger = zluxUtil.loggers.clusterLogger;
+
 
 // mime
 const mimeList = {
@@ -21,14 +24,20 @@ const initHandler = (initConfig) => {
 };
 
 // write log
-const writeLog =  (request, response, code, file) => {
+const writeLog =  (url, code, error, file) => { 
+  let writeMessage;
   if (!config.verbose) {
     return;
   }
 
-  const ts = new Date();
-  const tss = ts.toUTCString();
-  process.stdout.write(`[${config.serviceFor}][${tss}] ${request.url} ${code} ${file}\n`);
+  if (error.code) {
+    writeMessage = `Request ${url} ended with code ${code} and error ${error.code} for file ${file}`;
+  }
+  else {
+    writeMessage = `Request ${url} ended with code ${code} for file ${file}`; 
+  }  
+  clusterLogger.info(writeMessage);
+  
 };
 
 const mapRequestToUrl = (request) => { 
@@ -92,15 +101,15 @@ const buildCSPHeader = () => {
   return '';
 };
 
-const send404 = (request, response, error) => {
-  writeLog(request.url, 404, `error#${error.code}`);
+const send404 = (request, response, error, file) => {
+  writeLog(request.url, 404, error, file);
 
   response.writeHead(404, { 'Content-Type': mimeError });
   response.end('File not found');
 };
 
-const send301 = (request, response, error) => {
-  writeLog(request.url, 301, error.code);
+const send301 = (request, response, error, file) => {
+  writeLog(request.url, 301, error, file);
 
   response.writeHead(301, {
     'Content-Type': mimeError,
@@ -109,8 +118,8 @@ const send301 = (request, response, error) => {
   response.end('Moved Permanently');
 };
 
-const send500 = (request, response, error) => {
-  writeLog(request.url, 500, `error#${error.code}`);
+const send500 = (request, response, error, file) => {
+  writeLog(request.url, 500, error, file);
 
   response.writeHead(500, { 'Content-Type': mimeError });
   response.end(`Read file failed with error: ${error.code} ..\n`);
@@ -118,11 +127,11 @@ const send500 = (request, response, error) => {
 
 const handleFileReadError = (request, response, file, error) => {
   if (error.code == 'ENOENT') {
-    send404(request,response,{code: file});
+    send404(request,response,error,file);
   } else if (error.code == 'EISDIR') {
-    send301(request,response,{code: file});
+    send301(request,response,error,file);
   } else {
-    send500(request,response,error);
+    send500(request,response,error,file);
   }
 };
 
@@ -144,7 +153,7 @@ const handleFileReadSuccess = (request, response, url, file, content) => {
   const contentEncoding = mapFileToContentEncoding(file);
   
   // send file content
-  writeLog(request.url, 200, file);
+  writeLog(request.url, 200, {error: null}, file);
   let headers = {'Content-Type': contentType};
   if(contentEncoding>'') {
     headers['Content-Encoding'] = contentEncoding;
@@ -187,17 +196,17 @@ const updateCache = (request, file) => new Promise((resolve, reject) => {
 
 // define app
 const requestHandler = (request, response) => {
-  // process.stdout.write(`[request]:${request.url}\n`);
+  clusterLogger.debug(`[request]:${request.url}\n`);
 
   const targetUrl = mapRequestToUrl(request);
   const targetFile = mapUrlToFile(targetUrl);
 
-  // process.stdout.write(`[targetUrl]:${targetUrl}\n`);
-  // process.stdout.write(`[targetFile]:${targetFile}\n`);
+  clusterLogger.debug(`[targetUrl]:${targetUrl}\n`);
+  clusterLogger.debug(`[targetFile]:${targetFile}\n`);
 
 
   if(targetFile === null) {
-    // process.stdout.write(`[targetFile]:${targetFile} not found\n`);
+    clusterLogger.debug(`[targetFile]:${targetFile} not found\n`);
     send404(request, response, {code:'ENOFILE'});
     return;
   }
@@ -207,13 +216,13 @@ const requestHandler = (request, response) => {
   
   // file read success
   fileContent.then((content)=>{
-    // process.stdout.write(`[targetFile]:${targetFile} success\n`);
+    clusterLogger.debug(`[targetFile]:${targetFile} success\n`);
     handleFileReadSuccess(request, response, targetUrl, targetFile, content);
   });
 
   // file read error
   fileContent.catch((error)=> {
-    // process.stdout.write(`[targetFile]:${targetFile} error\n`);
+    clusterLogger.debug(`[targetFile]:${targetFile} error\n`);
     handleFileReadError(request, response, targetFile, error);
     return;
   });

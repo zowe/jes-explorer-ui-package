@@ -14,6 +14,9 @@
 const stdio = require('stdio');
 const { httpTypeToString } = require('./utils');
 
+const zluxUtil = require('../../zlux/zlux-server-framework/lib/util.js');
+const clusterLogger = zluxUtil.loggers.clusterLogger;
+
 const params = stdio.getopt({
   'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
   'path': {key: 'b', args:1,    description: 'base path uri', default:''},
@@ -35,15 +38,16 @@ const serviceFor = params.service;
 let config;
 try {
   config = require('./config')(params);
-  process.stdout.write(`[${serviceFor}] rootDir ${config.rootDir}\n`);
-  process.stdout.write(`[${serviceFor}] version ${config.version}\n`);
-  process.stdout.write(`[${serviceFor}] script name ${config.scriptName}\n`);
-  process.stdout.write(`[${serviceFor}] paths ${JSON.stringify(config.paths)}\n`);
-  process.stdout.write(`[${serviceFor}] port ${JSON.stringify(config.port)}\n`);
-  process.stdout.write(`[${serviceFor}] https using ${httpTypeToString(config.https.type)}\n`);
+  
+  clusterLogger.info(`[${serviceFor}] rootDir ${config.rootDir}`);
+  clusterLogger.info(`[${serviceFor}] version ${config.version}\n`);
+  clusterLogger.info(`[${serviceFor}] script name ${config.scriptName}\n`);
+  clusterLogger.info(`[${serviceFor}] paths ${JSON.stringify(config.paths)}\n`);
+  clusterLogger.info(`[${serviceFor}] port ${JSON.stringify(config.port)}\n`);
+  clusterLogger.info(`[${serviceFor}] https using ${httpTypeToString(config.https.type)}\n`);
 } catch (err)  {
-  process.stderr.write(`[${serviceFor}] failed to process config\n`);
-  process.stderr.write(`[${serviceFor}] ${err}\n\n`);
+  clusterLogger.info(`[${serviceFor}] failed to process config\n`);
+  clusterLogger.info(`[${serviceFor}] ${err}\n\n`);
   process.exit(1);
 }
 
@@ -53,10 +57,10 @@ try {
   const staticFileHandler = require('./staticFileHandler')(config);
   // configure https server and start listening
   const httpsServer =require('./server')(config,staticFileHandler);
-  httpsServer.listen(config.port, '0.0.0.0', () => { process.stdout.write(`[${config.serviceFor}] is started and listening on ${config.port}...\n\n`);});
+  httpsServer.listen(config.port, '0.0.0.0', () => { clusterLogger.info(`[${config.serviceFor}] is started and listening on ${config.port}...\n\n`);});
 
 } catch (err) {
-  process.stderr.write(`[${config.serviceFor}] is failed to start, error:\n`);
-  process.stderr.write(`[${config.serviceFor}] ${err}\n\n`);
+  clusterLogger.info(`[${config.serviceFor}] is failed to start, error:\n`);
+  clusterLogger.info(`[${config.serviceFor}] ${err}\n\n`);
   process.exit(1);
 }
