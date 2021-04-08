@@ -14,8 +14,10 @@
 const stdio = require('stdio');
 const { httpTypeToString } = require('./utils');
 
-const zluxUtil = require('../../zlux/zlux-server-framework/lib/util.js');
-const clusterLogger = zluxUtil.loggers.clusterLogger;
+const { Logger } = require('../../zlux/zlux-shared/src/logging/logger.js');
+let logger = new Logger();
+logger.addDestination(logger.makeDefaultDestination(true,true,true,true,true,"ZWEU"));
+var clusterLogger = logger.makeComponentLogger("_zsf.cluster");
 
 const params = stdio.getopt({
   'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
@@ -46,8 +48,8 @@ try {
   clusterLogger.info(`[${serviceFor}] port ${JSON.stringify(config.port)}\n`);
   clusterLogger.info(`[${serviceFor}] https using ${httpTypeToString(config.https.type)}\n`);
 } catch (err)  {
-  clusterLogger.info(`[${serviceFor}] failed to process config\n`);
-  clusterLogger.info(`[${serviceFor}] ${err}\n\n`);
+  clusterLogger.critical(`[${serviceFor}] failed to process config\n`);
+  clusterLogger.critical(`[${serviceFor}] ${err}\n\n`);
   process.exit(1);
 }
 

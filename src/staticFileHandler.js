@@ -2,8 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const cache = new Map();
 
-const zluxUtil = require('../../zlux/zlux-server-framework/lib/util.js');
-const clusterLogger = zluxUtil.loggers.clusterLogger;
+const { Logger } = require('../../zlux/zlux-shared/src/logging/logger.js');
+let logger = new Logger();
+logger.addDestination(logger.makeDefaultDestination(true,true,true,true,true,"ZWEU"));
+var clusterLogger = logger.makeComponentLogger("_zsf.cluster");
 
 
 // mime
