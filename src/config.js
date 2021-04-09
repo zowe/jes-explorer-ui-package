@@ -14,7 +14,7 @@ const rootDir = path.resolve(__dirname, '..');
 const pkg = require('../package.json');
 const { HTTPS_TYPE } = require('./utils');
 
-const { Logger } = require('../../zlux/zlux-shared/src/logging/logger.js');
+const { Logger } = require('../../zlux-shared/src/logging/logger.js');
 let logger = new Logger();
 logger.addDestination(logger.makeDefaultDestination(true,true,true,true,true,"ZWEU"));
 var clusterLogger = logger.makeComponentLogger("_zsf.cluster");
