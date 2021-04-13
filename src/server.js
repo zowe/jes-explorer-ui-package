@@ -2,7 +2,6 @@ const https = require('https');
 const { constants: cryptoConstants } = require('crypto');
 const { HTTPS_TYPE } = require('./utils');
 
-
 function extractHttpsConfigFromConfig(config) {
   let httpsConfig = {};
   if(config.https.type === HTTPS_TYPE.KEY_CERT || config.https.type === HTTPS_TYPE.KEYRING) {

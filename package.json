@@ -20,6 +20,13 @@
     "test": "nyc mocha"
   },
   "dependencies": {
+    "ajv": "^6.12.3",
+    "flat": "^5.0.1",
+    "glob-parent": "^5.1.2",
+    "hosted-git-info": "^3.0.8",
+    "lodash": "^4.17.21",
+    "opener": "^1.5.2",
+    "pathval": "^1.1.1",
     "stdio": "0.2.7"
   },
   "optionalDependencies": {
@@ -27,7 +34,7 @@
   },
   "devDependencies": {
     "abort-controller": "^3.0.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "chai": "^4.2.0",
     "debug": "^4.1.1",
     "eslint": "^5.16.0",

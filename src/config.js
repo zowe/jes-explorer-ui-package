@@ -14,6 +14,11 @@ const rootDir = path.resolve(__dirname, '..');
 const pkg = require('../package.json');
 const { HTTPS_TYPE } = require('./utils');
 
+const { Logger } = require('../../zlux-shared/src/logging/logger.js');
+let logger = new Logger();
+logger.addDestination(logger.makeDefaultDestination(true,true,true,true,true,'ZWEU'));
+var clusterLogger = logger.makeComponentLogger('_zsf.cluster');
+
 const os = require('os');
 let keyring_js;
 try {
@@ -21,7 +26,7 @@ try {
     keyring_js = require('keyring_js');
   }
 } catch (e) {
-  process.stdout.write('Could not load zcrypto library, SAF keyrings will be unavailable\n');
+  clusterLogger.warn('Could not load zcrypto library, SAF keyrings will be unavailable\n');
 }
 
 
@@ -33,26 +38,26 @@ function validateParams (params) {
 
   if((params.path==='' || !params.path) && isValid) {
     isValid = false;
-    process.stderr.write(`[${serviceFor}] paths configuration is missing\n`);
+    clusterLogger.critical(`[${serviceFor}] paths configuration is missing\n`);
   }
 
   if((params.port==='' || !params.port) && isValid) {
     isValid = false;
-    process.stderr.write(`[${serviceFor}] port configuration is missing\n`);
+    clusterLogger.critical(`[${serviceFor}] port configuration is missing\n`);
   }
 
   if( (params.key==='' && params.cert==='' && params.pfx==='' && params.pass==='' && params['keyring'] ==='' && params['keyring-owner']==='' && params['keyring-label']==='') && isValid) {
     isValid = false;
-    process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
+    clusterLogger.critical(`[${serviceFor}] https configuration is missing\n`);
   }
 
   if( whichHttpsType(params)===0 && isValid) {
     isValid = false;
-    process.stderr.write(`[${serviceFor}] https configuration is missing\n`);
+    clusterLogger.critical(`[${serviceFor}] https configuration is missing\n`);
   }
 
   if(!isValid) {
-    process.stderr.write(`[${serviceFor}] is failed to start, error:\n`);
+    clusterLogger.critical(`[${serviceFor}] is failed to start, error:\n`);
     params.printHelp();
     process.exit(1);
     return false;
@@ -111,7 +116,7 @@ function loadKeyCerts(config) {
       config.https[key] = fs.readFileSync(filePath);
     });
   } catch(err) {
-    process.stderr.write(`[${serviceFor}] exception thrown when reading key cert files no such file or directory\n`);
+    clusterLogger.critical(`[${serviceFor}] exception thrown when reading key cert files no such file or directory\n`);
     process.exit(1);
   }
   return config;
@@ -123,7 +128,7 @@ function loadPfx(config) {
     let filePath = config.https['pfx'];
     config.https['pfx'] = fs.readFileSync(filePath);
   } catch(err) {
-    process.stderr.write(`[${serviceFor}] exception thrown when reading pfx no such file or directory\n`);
+    clusterLogger.critical(`[${serviceFor}] exception thrown when reading pfx no such file or directory\n`);
     process.exit(1);
   }
   return config;
@@ -138,17 +143,17 @@ function loadKeyringCerts(config) {
       config.https.cert = keyringData.certificate;
       config.https.key = keyringData.key;
     } catch (err) {
-      process.stderr.write(`[${serviceFor}] exception thrown when reading SAF keyring\n`);
-      process.stderr.write(`${err}\n\n`);
+      clusterLogger.critical(`[${serviceFor}] exception thrown when reading SAF keyring\n`);
+      clusterLogger.critical(`${err}\n\n`);
       process.exit(1);
     }
   } else {
-    process.stderr.write(`[${serviceFor}] cannot load SAF keyring due to missing keyring_js library\n`);
+    clusterLogger.critical(`[${serviceFor}] cannot load SAF keyring due to missing keyring_js library\n`);
     process.exit(1);
   }
 
   if(config.https.key === '' && config.https.cert === ''){
-    process.stderr.write(`[${serviceFor}] failed to process keyring\n`);
+    clusterLogger.critical(`[${serviceFor}] failed to process keyring\n`);
     process.exit(1);
   }
   return config;
@@ -158,7 +163,7 @@ function loadPaths(config) {
   const paths = [];
   for (let one of config.paths) {
     const baseDir = path.resolve(rootDir, one.dir);
-    process.stdout.write(`[${config.serviceFor}]   - ${one.uri} => ${baseDir}\n`);
+    clusterLogger.info(`[${config.serviceFor}]   - ${one.uri} => ${baseDir}\n`);
     paths.push({ uri: one.uri, dir: baseDir });
   }
   config.paths = paths;
@@ -176,7 +181,7 @@ function loadPackageMeta(config) {
 function loadParams(params) {
 
   if(params.verbose) {
-    process.stdout.write(`[${params.service}]: args ${JSON.stringify(params)}\n`);
+    clusterLogger.info(`[${params.service}]: args ${JSON.stringify(params)}\n`);
   }
 
   validateParams(params);
@@ -202,7 +207,8 @@ function loadParams(params) {
     },
     'csp': {
       'frame-ancestors': [params.csp]
-    }
+    },
+    'verbose': params.verbose,
   };
 
   return paramConfig;
