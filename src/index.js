@@ -16,8 +16,8 @@ const { httpTypeToString } = require('./utils');
 
 const { Logger } = require('../../zlux-shared/src/logging/logger.js');
 let logger = new Logger();
-logger.addDestination(logger.makeDefaultDestination(true,true,true,true,true,"ZWEU"));
-var clusterLogger = logger.makeComponentLogger("_zsf.cluster");
+logger.addDestination(logger.makeDefaultDestination(true,true,true,true,true,'ZWEU'));
+var clusterLogger = logger.makeComponentLogger('_zsf.cluster');
 
 const params = stdio.getopt({
   'service': {key: 's',  args:1, description: 'service-for path', default:'', type: 'string'},
